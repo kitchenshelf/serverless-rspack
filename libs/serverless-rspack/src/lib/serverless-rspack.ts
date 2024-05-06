@@ -77,8 +77,9 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
           !this.functionEntries ||
           Object.entries(this.functionEntries).length === 0
         ) {
-          // TODO: correct way to handle errors in SLS?
-          throw 'No function entries provided';
+          throw new this.serverless.classes.Error(
+            `No function entries provided - try running in verbose mode to see expected entries`
+          );
         }
         await this.#bundle(this.functionEntries);
         await this.#pack();
