@@ -1,6 +1,8 @@
 # serverless-rspack
 
-This library was generated with [Nx](https://nx.dev).
+<img src="https://assets.rspack.dev/rspack/rspack-logo.svg" width="100" height="100">
+
+[Serverless Framework](https://www.serverless.com) plugin for zero-config JavaScript and TypeScript code bundling using the high performance Rust-based JavaScript bundler [`rspack`](https://www.rspack.dev/guide/introduction.html)
 
 ## Building
 
