@@ -1,0 +1,50 @@
+{
+  "name": "@serverless-rspack/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "devDependencies": {
+    "@nx/esbuild": "18.3.4",
+    "@nx/eslint": "18.3.4",
+    "@nx/eslint-plugin": "18.3.4",
+    "@nx/jest": "18.3.4",
+    "@nx/js": "^18.3.4",
+    "@nx/workspace": "18.3.4",
+    "@swc-node/register": "~1.8.0",
+    "@swc/core": "~1.3.85",
+    "@swc/helpers": "~0.5.2",
+    "@types/archiver": "^6.0.2",
+    "@types/jest": "^29.4.0",
+    "@types/node": "18.16.9",
+    "@types/serverless": "^3.12.22",
+    "@typescript-eslint/eslint-plugin": "^7.3.0",
+    "@typescript-eslint/parser": "^7.3.0",
+    "esbuild": "^0.19.2",
+    "eslint": "~8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-require-extensions": "^0.1.3",
+    "i": "^0.3.7",
+    "jest": "^29.4.1",
+    "jest-environment-node": "^29.4.1",
+    "npm": "^10.7.0",
+    "nx": "18.3.4",
+    "prettier": "^2.6.2",
+    "ts-jest": "^29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "~5.4.2",
+    "verdaccio": "^5.0.4"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "p-map": "^7.0.2",
+    "serverless": "^3.38.0",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@rspack/core": "latest"
+  },
+  "nx": {
+    "includedScripts": []
+  }
+}

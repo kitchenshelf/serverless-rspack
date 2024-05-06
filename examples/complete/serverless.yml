@@ -1,0 +1,28 @@
+service: complete-example
+
+plugins:
+  - '@kitchenshelf/serverless-rspack'
+  - serverless-offline
+
+custom:
+  rspack:
+    config: './rspack.config.js'
+    keepOutputDirectory: true
+    stats: true
+    # esm: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+functions:
+  App1:
+    handler: app1.handler
+  app2:
+    handler: app2.handler
+  app3:
+    handler: src/App3.handler
+  app4:
+    handler: src/app4.handler
+  app5:
+    handler: src/deeply/nested/somewhat/app5.handler
