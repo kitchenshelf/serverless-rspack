@@ -39,7 +39,8 @@
     "archiver": "^7.0.1",
     "p-map": "^7.0.2",
     "serverless": "^3.38.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^3.23.6"
   },
   "peerDependencies": {
     "@rspack/core": "latest"

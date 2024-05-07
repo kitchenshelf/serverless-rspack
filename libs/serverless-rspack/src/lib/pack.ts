@@ -23,13 +23,13 @@ export async function pack(this: RspackServerlessPlugin) {
       const startZip = Date.now();
 
       await zipDirectory(
-        this.serviceDirPath + '/' + this.workFolder + '/' + name,
+        this.serviceDirPath + '/' + this.buildOutputFolder + '/' + name,
         artifactPath
       );
       const { size } = fs.statSync(artifactPath);
 
       this.log.verbose(
-        `Zip service ${this.serverless.service.service}: ${
+        `[PERFORMANCE] Pack service ${this.serverless.service.service}: ${
           loadedFunc.name
         } -  ${humanSize(size)} [${Date.now() - startZip} ms]`
       );
@@ -41,12 +41,15 @@ export async function pack(this: RspackServerlessPlugin) {
     };
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  this.log.verbose(
+    `[PERFORMANCE] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginConfig.zipConcurrency}] `
+  );
+
   await pMap(
     Object.entries(this.functionEntries).map((x) => x[0]),
     zipMapper,
     {
-      concurrency: 2,
+      concurrency: this.pluginConfig.zipConcurrency,
     }
   );
 }

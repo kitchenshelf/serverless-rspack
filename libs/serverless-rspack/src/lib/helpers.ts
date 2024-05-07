@@ -1,5 +1,5 @@
 import { RspackOptions, rspack } from '@rspack/core';
-import type { Configuration } from './types.js';
+import type { PluginConfiguration } from './types.js';
 
 export const humanSize = (size: number) => {
   const exponent = Math.floor(Math.log(size) / Math.log(1024));
@@ -17,8 +17,8 @@ const esmOutput = {
 };
 
 export const defaultConfig: (
-  entries: Record<string, any>,
-  buildOptions: Configuration,
+  entries: RspackOptions['entry'],
+  buildOptions: PluginConfiguration,
   workFolderPath: string
 ) => RspackOptions = (entries, buildOptions, workFolderPath) => ({
   mode: buildOptions.mode,

@@ -1,49 +1,51 @@
 import { RspackOptions, rspack } from '@rspack/core';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
-import Serverless from 'serverless';
 import { defaultConfig } from './helpers.js';
 import type { RspackServerlessPlugin } from './serverless-rspack.js';
 
 export async function bundle(
   this: RspackServerlessPlugin,
-  entries: Record<string, Serverless.FunctionDefinitionHandler>
+  entries: RspackOptions['entry']
 ) {
-  const configPath = this.serverless.service.custom?.['rspack']?.config;
-
   let config: RspackOptions;
-
-  if (configPath) {
-    const providedConfig = (
-      await import(path.join(this.serviceDirPath, configPath))
-    ).default;
+  if (this.providedRspackConfig) {
     config = {
-      ...providedConfig,
+      ...this.providedRspackConfig,
       entry: entries,
       output: {
-        ...providedConfig.output,
-        path: this.workFolderPath,
+        ...this.providedRspackConfig.output,
+        path: this.buildOutputFolderPath,
       },
     };
   } else {
-    config = defaultConfig(entries, this.buildOptions, this.workFolderPath);
+    config = defaultConfig(
+      entries,
+      this.pluginConfig,
+      this.buildOutputFolderPath
+    );
   }
-  this.log.info(config);
+  this.log.verbose('Bundling with config: ', config);
+  const startPack = Date.now();
 
   return new Promise((resolve) => {
     rspack(config, (x, y) => {
-      if (this.buildOptions?.stats) {
+      if (this.pluginConfig.stats) {
         const c = y?.toJson();
         try {
           writeFileSync(
-            path.join(this.workFolderPath, 'stats.json'),
+            path.join(this.buildOutputFolderPath, 'stats.json'),
             JSON.stringify(c)
           );
         } catch (error) {
-          this.log?.info(error);
+          this.log?.error('Failed to write stats file: ', error);
         }
       }
-      console.log('done');
+      this.log.verbose(
+        `[PERFORMANCE] Bundle service ${this.serverless.service.service} [${
+          Date.now() - startPack
+        } ms]`
+      );
       resolve('Success!'); // Yay! Everything went well!
     });
   });
