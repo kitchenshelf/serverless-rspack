@@ -1,3 +1,14 @@
+## 0.1.0 (2024-05-07)
+
+
+### 🚀 Features
+
+- **serverless-rspack:** add zod validation to user custom config ([a0009b6](https://github.com/kitchenshelf/serverless-rspack/commit/a0009b6))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 0.0.3 (2024-05-06)
 
 
