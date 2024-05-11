@@ -1,10 +1,45 @@
 {
   "name": "@kitchenshelf/serverless-rspack",
   "version": "0.0.1",
-  "dependencies": {
-    "tslib": "^2.3.0"
+  "license": "MIT",
+  "author": {
+    "name": "Chris Williams",
+    "url": "https://github.com/codingnuclei"
   },
+  "keywords": [
+    "serverless",
+    "serverless plugin",
+    "plugin",
+    "rspack",
+    "aws lambda",
+    "aws",
+    "lambda",
+    "bundler",
+    "minifier",
+    "typescript"
+  ],
   "type": "module",
   "main": "./src/index.js",
-  "typings": "./src/index.d.ts"
+  "typings": "./src/index.d.ts",
+  "module": "./src/index.js",
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "p-map": "^7.0.2",
+    "tslib": "^2.3.0",
+    "zod": "^3.23.6"
+  },
+  "peerDependencies": {
+    "@rspack/core": "latest",
+    "serverless": "^3.38.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kitchenshelf/serverless-rspack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kitchenshelf/serverless-rspack/issues"
+  },
+  "engines": {
+    "node": ">=20.13.1"
+  }
 }
