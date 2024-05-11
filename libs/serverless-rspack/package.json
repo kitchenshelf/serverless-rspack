@@ -34,7 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kitchenshelf/serverless-rspack.git"
+    "url": "https://github.com/kitchenshelf/serverless-rspack.git",
+    "directory": "libs/serverless-rspack"
   },
   "bugs": {
     "url": "https://github.com/kitchenshelf/serverless-rspack/issues"
