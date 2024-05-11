@@ -1,4 +1,6 @@
 import { RspackOptions, rspack } from '@rspack/core';
+import path from 'node:path';
+import { cwd } from 'node:process';
 import type { PluginConfiguration } from './types.js';
 
 export const humanSize = (size: number) => {
@@ -29,7 +31,11 @@ export const defaultConfig: (
   },
   resolve: {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
-    // tsConfigPath: path.resolve(cwd(), "tsconfig.app.json"),
+    ...(buildOptions.tsConfigPath
+      ? {
+          tsConfigPath: path.resolve(cwd(), buildOptions.tsConfigPath),
+        }
+      : {}),
   },
   plugins: [
     new rspack.DefinePlugin({
