@@ -8,7 +8,11 @@ import type ServerlessPlugin from 'serverless/classes/Plugin';
 import { bundle } from './bundle.js';
 import { SERVERLESS_FOLDER, WORK_FOLDER } from './constants.js';
 import { pack } from './pack.js';
-import { PluginConfiguration, PluginConfigurationSchema } from './types.js';
+import {
+  PluginConfiguration,
+  PluginConfigurationSchema,
+  RsPackFunctionDefinitionHandler,
+} from './types.js';
 
 export class RspackServerlessPlugin implements ServerlessPlugin {
   serviceDirPath: string;
@@ -38,6 +42,13 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     logging: ServerlessPlugin.Logging
   ) {
     assert(logging, 'Please use serverless V4');
+
+    serverless.configSchemaHandler.defineFunctionProperties('aws', {
+      properties: {
+        rspack: { type: 'boolean' },
+      },
+    });
+
     this.serverless = serverless;
     this.options = options;
     this.log = logging.log;
@@ -149,18 +160,23 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     let entries = {};
 
     functions.forEach((functionName) => {
-      const functionDefinitionHandler =
-        this.serverless.service.getFunction(functionName);
-
-      // TODO: support container images
-      const entry = this.getEntryForFunction(
-        functionName,
-        functionDefinitionHandler as Serverless.FunctionDefinitionHandler
-      );
-      entries = {
-        ...entries,
-        ...entry,
-      };
+      const functionDefinitionHandler = this.serverless.service.getFunction(
+        functionName
+      ) as RsPackFunctionDefinitionHandler;
+      if (
+        functionDefinitionHandler.rspack ||
+        this.isNodeFunction(functionDefinitionHandler)
+      ) {
+        // TODO: support container images
+        const entry = this.getEntryForFunction(
+          functionName,
+          functionDefinitionHandler as Serverless.FunctionDefinitionHandler
+        );
+        entries = {
+          ...entries,
+          ...entry,
+        };
+      }
     });
     return entries;
   }
@@ -225,6 +241,18 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       return handlerEntry[1];
     }
     throw new this.serverless.classes.Error(`malformed handler: ${handler}`);
+  }
+
+  /**
+   * Checks if the runtime for the given function is nodejs.
+   * If the runtime is not set , checks the global runtime.
+   * @param {Serverless.FunctionDefinitionHandler} func the function to be checked
+   * @returns {boolean} true if the function/global runtime is nodejs; false, otherwise
+   */
+  private isNodeFunction(func: Serverless.FunctionDefinitionHandler): boolean {
+    const runtime = func.runtime || this.serverless.service.provider.runtime;
+
+    return typeof runtime === 'string' && runtime.startsWith('node');
   }
 
   private async cleanup(): Promise<void> {

@@ -1,3 +1,4 @@
+import Serverless from 'serverless';
 import { z } from 'zod';
 
 export const PluginConfigurationSchema = z.object({
@@ -12,3 +13,7 @@ export const PluginConfigurationSchema = z.object({
 });
 
 export type PluginConfiguration = z.infer<typeof PluginConfigurationSchema>;
+
+export type RsPackFunctionDefinitionHandler = {
+  rspack?: boolean;
+} & Serverless.FunctionDefinitionHandler;
