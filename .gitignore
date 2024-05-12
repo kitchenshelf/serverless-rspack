@@ -42,3 +42,4 @@ Thumbs.db
 
 .nx/cache
 .env.local
+examples/complete/package-lock.json

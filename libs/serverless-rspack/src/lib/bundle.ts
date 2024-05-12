@@ -1,8 +1,9 @@
 import { RspackOptions, rspack } from '@rspack/core';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { defaultConfig } from './helpers.js';
+import { cwd } from 'node:process';
 import type { RspackServerlessPlugin } from './serverless-rspack.js';
+import type { PluginConfiguration } from './types.js';
 
 export async function bundle(
   this: RspackServerlessPlugin,
@@ -22,7 +23,8 @@ export async function bundle(
     config = defaultConfig(
       entries,
       this.pluginConfig,
-      this.buildOutputFolderPath
+      this.buildOutputFolderPath,
+      this.log
     );
   }
   this.log.verbose('Bundling with config: ', config);
@@ -42,7 +44,7 @@ export async function bundle(
         }
       }
       this.log.verbose(
-        `[PERFORMANCE] Bundle service ${this.serverless.service.service} [${
+        `[Performance] Bundle service ${this.serverless.service.service} [${
           Date.now() - startPack
         } ms]`
       );
@@ -50,3 +52,82 @@ export async function bundle(
     });
   });
 }
+
+const esmOutput = {
+  chunkFormat: 'module',
+  chunkLoading: 'import',
+  library: {
+    type: 'module',
+  },
+};
+
+const defaultConfig: (
+  entries: RspackOptions['entry'],
+  buildOptions: PluginConfiguration,
+  workFolderPath: string,
+  logger: RspackServerlessPlugin['log']
+) => RspackOptions = (entries, buildOptions, workFolderPath, logger) => ({
+  mode: buildOptions.mode,
+  entry: entries,
+  target: 'node',
+  experiments: {
+    outputModule: buildOptions.esm,
+  },
+  resolve: {
+    extensions: ['...', '.ts', '.tsx', '.jsx'],
+    ...(buildOptions.tsConfigPath
+      ? {
+          tsConfigPath: path.resolve(cwd(), buildOptions.tsConfigPath),
+        }
+      : {}),
+  },
+  ...(buildOptions.externals?.length && buildOptions.externals?.length > 0
+    ? {
+        externals: [
+          ({ request }: any, callback: any) => {
+            const isExternal = buildOptions?.externals?.some((external) => {
+              return new RegExp(external).test(request);
+            });
+            if (isExternal) {
+              logger.verbose(`[Bundle] Marking ${request} as external`);
+              return callback(
+                null,
+                buildOptions.esm ? 'module ' : 'commonjs ' + request
+              );
+            }
+            callback();
+          },
+        ],
+      }
+    : {}),
+  plugins: [
+    new rspack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env['NODE_ENV']),
+    }),
+    new rspack.ProgressPlugin({}),
+    new rspack.node.NodeTargetPlugin(),
+  ].filter(Boolean),
+
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: {
+          loader: 'builtin:swc-loader',
+          options: {
+            target: 'es2020',
+            jsc: {
+              parser: {
+                syntax: 'typescript',
+              },
+            },
+          },
+        },
+      },
+    ],
+  },
+  output: {
+    ...(buildOptions.esm ? esmOutput : {}),
+    path: workFolderPath,
+  },
+});

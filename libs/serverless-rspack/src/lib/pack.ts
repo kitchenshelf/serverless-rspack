@@ -29,7 +29,7 @@ export async function pack(this: RspackServerlessPlugin) {
       const { size } = fs.statSync(artifactPath);
 
       this.log.verbose(
-        `[PERFORMANCE] Pack service ${this.serverless.service.service}: ${
+        `[Performance] Pack service ${this.serverless.service.service}: ${
           loadedFunc.name
         } -  ${humanSize(size)} [${Date.now() - startZip} ms]`
       );
@@ -42,7 +42,7 @@ export async function pack(this: RspackServerlessPlugin) {
   };
 
   this.log.verbose(
-    `[PERFORMANCE] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginConfig.zipConcurrency}] `
+    `[Performance] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginConfig.zipConcurrency}] `
   );
 
   await pMap(

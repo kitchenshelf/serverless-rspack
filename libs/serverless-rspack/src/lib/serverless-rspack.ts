@@ -109,7 +109,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         this.log?.verbose('after:package:createDeploymentArtifacts');
         await this.cleanup();
         this.log.verbose(
-          `[PERFORMANCE] Hook createDeploymentArtifacts ${
+          `[Performance] Hook createDeploymentArtifacts ${
             this.serverless.service.service
           } [${
             Date.now() -
@@ -270,6 +270,8 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       stats: false,
       keepOutputDirectory: false,
       zipConcurrency: Infinity,
+      externals: null,
+      tsConfigPath: null,
     };
 
     let config: Required<PluginConfiguration>;

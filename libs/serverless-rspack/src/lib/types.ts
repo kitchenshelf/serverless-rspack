@@ -9,7 +9,8 @@ export const PluginConfigurationSchema = z.object({
   // [START] Rspack influenced - Ignored if config file is provided
   esm: z.boolean().optional(),
   mode: z.enum(['production', 'development', 'none']).optional(),
-  tsConfigPath: z.string().optional(),
+  tsConfigPath: z.string().optional().nullable(),
+  externals: z.array(z.string()).optional().nullable(),
   // [END] Rspack influenced - Ignored if config file is provided
 });
 
