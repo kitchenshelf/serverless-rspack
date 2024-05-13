@@ -47,7 +47,7 @@ const yargs = require('yargs');
     });
 
     // This will create a release on GitHub, which will act as a trigger for the publish.yml workflow
-    const status = await releaseChangelog({
+    await releaseChangelog({
       version: workspaceVersion,
       versionData: projectsVersionData,
       dryRun: options.dryRun,
