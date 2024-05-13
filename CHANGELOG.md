@@ -1,3 +1,14 @@
+## 1.0.0-alpha.2 (2024-05-13)
+
+
+### 🚀 Features
+
+- **sls-rspack:** external rspack config must return a function ([43bb276](https://github.com/kitchenshelf/serverless-rspack/commit/43bb276))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.1 (2024-05-13)
 
 ### 🚀 Features
