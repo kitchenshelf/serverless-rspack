@@ -8,10 +8,10 @@ custom:
   rspack:
     keepOutputDirectory: true
     # stats: true
-    # config: './rspack.config.js'
+    config: './rspack.config.js'
     esm: true
     mode: development
-    externals: 
+    externals:
       - "^@aws-sdk\/.*$"
       - "^@smithy\/.*$"
       - 'isin-validator'

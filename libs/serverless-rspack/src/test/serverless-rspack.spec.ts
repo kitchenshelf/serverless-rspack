@@ -238,9 +238,9 @@ describe('RspackServerlessPlugin', () => {
         });
       });
       it('should load a rspack config from file if `custom.rspack.config` is a string', async () => {
-        const loadedConfig = {
+        const loadedConfig = () => ({
           mode: 'development',
-        };
+        });
 
         jest.doMock(
           path.join('testServicePath', './rspack.config.js'),
@@ -265,7 +265,7 @@ describe('RspackServerlessPlugin', () => {
 
         await plugin.hooks['initialize']();
 
-        expect(plugin.providedRspackConfig).toEqual(loadedConfig);
+        expect(plugin.providedRspackConfig).toEqual(loadedConfig());
       });
       it('should error if `custom.rspack.config` does not exist', async () => {
         const serverless = mockServerlessConfig({
@@ -292,6 +292,41 @@ describe('RspackServerlessPlugin', () => {
           );
         }
       });
+      it('should error if `custom.rspack.config` does not return a function', async () => {
+        const loadedConfig = {
+          mode: 'development',
+        };
+
+        jest.doMock(
+          path.join('testServicePath', './rspack.config.js'),
+          () => loadedConfig,
+          { virtual: true }
+        );
+        const serverless = mockServerlessConfig({
+          custom: {
+            rspack: {
+              config: './rspack.config.js',
+            },
+          },
+        });
+        serverless.config.serviceDir = 'testServicePath';
+        serverless.utils.fileExistsSync = jest.fn().mockReturnValue(true);
+
+        const plugin = new RspackServerlessPlugin(
+          serverless,
+          mockOptions,
+          logger
+        );
+
+        try {
+          await plugin.hooks['initialize']();
+        } catch (error) {
+          expect(serverless.classes.Error).toHaveBeenCalledTimes(1);
+          expect(serverless.classes.Error).toHaveBeenCalledWith(
+            'Config located at testServicePath/rspack.config.js does not return a function. See for reference: https://github.com/kitchenshelf/serverless-rspack/blob/main/README.md#config-file'
+          );
+        }
+      });
       it('should create mjs entries by default', async () => {
         const serverless = mockServerlessConfig();
         const plugin = new RspackServerlessPlugin(
@@ -314,11 +349,11 @@ describe('RspackServerlessPlugin', () => {
         });
       });
       it('should create mjs entries if providedRspackConfig experiments outputModule', async () => {
-        const loadedConfig = {
+        const loadedConfig = () => ({
           experiments: {
             outputModule: true,
           },
-        };
+        });
         jest.doMock(
           path.join('testServicePath2', './rspack.config.js'),
           () => loadedConfig,

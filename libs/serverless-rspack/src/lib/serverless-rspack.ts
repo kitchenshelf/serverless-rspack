@@ -133,6 +133,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
 
   private async init() {
     this.pluginOptions = this.getPluginOptions();
+
     if (this.pluginOptions.config) {
       const configPath = path.join(
         this.serviceDirPath,
@@ -143,8 +144,19 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
           `Rspack config does not exist at path: ${configPath}`
         );
       }
-      this.providedRspackConfig = (await import(configPath)).default;
+      const configFn = (await import(configPath)).default;
+
+      if (typeof configFn !== 'function') {
+        throw new this.serverless.classes.Error(
+          `Config located at ${configPath} does not return a function. See for reference: https://github.com/kitchenshelf/serverless-rspack/blob/main/README.md#config-file`
+        );
+      }
+
+      this.providedRspackConfig = (await import(configPath)).default(
+        this.serverless
+      );
     }
+
     const functions = this.serverless.service.getAllFunctions();
     this.functionEntries = this.buildFunctionEntries(functions);
     this.log.verbose('Function Entries:', this.functionEntries);
