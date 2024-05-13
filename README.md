@@ -152,5 +152,5 @@ Inspired by [serverless-plugin-typescript](https://github.com/prisma-labs/server
 
 
 [link-serverless]: https://www.serverless.com/
-[link-npm]: https://www.npmjs.com/package/@kitchenshelf/serverless-rspack.svg
+[link-npm]: https://www.npmjs.com/package/@kitchenshelf/serverless-rspack
 [link-build]: https://github.com/kitchenshelf/serverless-rspack/actions/workflows/ci.yml
