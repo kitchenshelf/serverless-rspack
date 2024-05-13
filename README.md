@@ -21,7 +21,7 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 ## Table of Contents
 
 - [Install](#install)
-- [Configuration](#configuration)
+- [Plugin Options](#plugin-options)
   - [Examples](#examples)
   - [Options](#options)
     - [Default Rspack Options](#default-rspack-options)
@@ -48,9 +48,9 @@ plugins:
   - @kitchenshelf/serverless-rspack
 ```
 
-## Configuration
+## Plugin Options
 
-By default, no configuration is required, but you can override the reasonable defaults via the `custom.rspack` section in the `serverless.yml` file.
+By default, no plugin options is required, but you can override the reasonable defaults via the `custom.rspack` section in the `serverless.yml` file.
 
 ```yml
 custom:
@@ -61,9 +61,9 @@ custom:
 
 ### Examples
 
-See [example folder](../../examples) for some example configurations.
+See [example folder](../../examples) for example plugin option configuration.
 
-### Options
+### Plugin Options
 
 | Option                 | Description                                                        | Default                           |
 |------------------------|--------------------------------------------------------------------|-----------------------------------|
