@@ -20,7 +20,7 @@
         "outputPath": "dist/libs/serverless-rspack",
         "main": "libs/serverless-rspack/src/index.ts",
         "tsConfig": "libs/serverless-rspack/tsconfig.lib.json",
-        "assets": ["libs/serverless-rspack/*.md"]
+        "assets": ["libs/serverless-rspack/*.md", "README.md"]
       }
     },
     "nx-release-publish": {
