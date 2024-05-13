@@ -1,7 +1,7 @@
 import Serverless from 'serverless';
 import { z } from 'zod';
 
-export const PluginConfigurationSchema = z.object({
+export const PluginOptionsSchema = z.object({
   keepOutputDirectory: z.boolean().optional(),
   zipConcurrency: z.number().optional(),
   stats: z.boolean().optional(),
@@ -14,7 +14,7 @@ export const PluginConfigurationSchema = z.object({
   // [END] Rspack influenced - Ignored if config file is provided
 });
 
-export type PluginConfiguration = z.infer<typeof PluginConfigurationSchema>;
+export type PluginOptions = z.infer<typeof PluginOptionsSchema>;
 
 export type RsPackFunctionDefinitionHandler = {
   rspack?: boolean;

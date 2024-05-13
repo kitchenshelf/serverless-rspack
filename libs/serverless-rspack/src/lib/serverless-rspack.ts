@@ -9,8 +9,8 @@ import { bundle } from './bundle.js';
 import { SERVERLESS_FOLDER, WORK_FOLDER } from './constants.js';
 import { pack } from './pack.js';
 import {
-  PluginConfiguration,
-  PluginConfigurationSchema,
+  PluginOptions,
+  PluginOptionsSchema,
   RsPackFunctionDefinitionHandler,
 } from './types.js';
 
@@ -24,7 +24,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   serverless: Serverless;
   options: Serverless.Options;
 
-  pluginConfig!: Required<PluginConfiguration>;
+  pluginOptions!: Required<PluginOptions>;
   providedRspackConfig: RspackOptions | undefined;
 
   functionEntries: RspackOptions['entry'] | undefined;
@@ -53,7 +53,6 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     this.options = options;
     this.log = logging.log;
     this.serviceDirPath = this.serverless.config.serviceDir;
-
     this.packageOutputPath = SERVERLESS_FOLDER;
     this.buildOutputFolder = WORK_FOLDER;
     this.buildOutputFolderPath = path.join(
@@ -65,35 +64,23 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       initialize: async () => {
         await this.init();
       },
-      'before:run:run': () => {
-        this.log?.verbose('before:run:run');
-        // this.bundle();
-        // await this.packExternalModules();
-        // await this.copyExtras();
-      },
-      'before:offline:start': () => {
-        this.log?.verbose('before:offline:start');
-        // await this.bundle();
-        // await this.packExternalModules();
-        // await this.copyExtras();
-        // await this.preOffline();
-        // this.watch();
-      },
-      'before:offline:start:init': () => {
-        this.log?.verbose('before:offline:start:init');
-        // await this.bundle();
-        // await this.packExternalModules();
-        // await this.copyExtras();
-        // await this.preOffline();
-        // this.watch();
-      },
+      // 'before:run:run': async () => {
+      // this.log.verbose('before:run:run');
+      // await this.#bundle(this.functionEntries);
+      // },
+      // 'before:offline:start': () => {
+      //   this.log.verbose('before:offline:start');
+      // },
+      // 'before:offline:start:init': () => {
+      //   this.log.verbose('before:offline:start:init');
+      // },
       'before:package:createDeploymentArtifacts': async () => {
+        this.log.verbose('before:package:createDeploymentArtifacts');
         this.timings.set(
           'before:package:createDeploymentArtifacts',
           Date.now()
         );
 
-        this.log?.verbose('before:package:createDeploymentArtifacts');
         if (
           !this.functionEntries ||
           Object.entries(this.functionEntries).length === 0
@@ -106,49 +93,57 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         await this.#pack();
       },
       'after:package:createDeploymentArtifacts': async () => {
-        this.log?.verbose('after:package:createDeploymentArtifacts');
+        this.log.verbose('after:package:createDeploymentArtifacts');
         await this.cleanup();
         this.log.verbose(
           `[Performance] Hook createDeploymentArtifacts ${
             this.serverless.service.service
           } [${
             Date.now() -
-            (this.timings.get('before:package:createDeploymentArtifacts') ?? 0)
+            this.timings.get('before:package:createDeploymentArtifacts')!
           } ms]`
         );
       },
-      'before:deploy:function:packageFunction': () => {
-        this.log?.verbose('after:deploy:function:packageFunction');
-        // await this.bundle();
-        // await this.packExternalModules();
-        // await this.copyExtras();
-        // await this.pack();
-      },
-      'after:deploy:function:packageFunction': () => {
-        this.log?.verbose('after:deploy:function:packageFunction');
-        // await this.disposeContexts();
-        // await this.cleanup();
-      },
-      'before:invoke:local:invoke': () => {
-        this.log?.verbose('before:invoke:local:invoke');
-        // await this.bundle();
-        // await this.packExternalModules();
-        // await this.copyExtras();
-        // await this.preLocal();
-      },
-      'after:invoke:local:invoke': () => {
-        this.log?.verbose('after:invoke:local:invoke');
-        // await this.disposeContexts();
-      },
+      // 'before:deploy:function:packageFunction': () => {
+      //   this.log.verbose('after:deploy:function:packageFunction');
+      // },
+      // 'after:deploy:function:packageFunction': () => {
+      //   this.log.verbose('after:deploy:function:packageFunction');
+      // },
+      // 'before:invoke:local:invoke': async () => {
+      //   this.log.verbose('before:invoke:local:invoke');
+      //   this.log.verbose(this.options);
+      //   // @ts-ignore
+      //   const invokeFunc: string =
+      //     this.serverless.processedInput.options.function;
+      //   this.log.verbose(invokeFunc);
+      //   await this.#bundle({
+      //     [invokeFunc]: (this.functionEntries as any)[invokeFunc],
+      //   });
+
+      //   this.serviceDirPath = this.buildOutputFolderPath;
+      //   this.serverless.config.servicePath = this.buildOutputFolderPath;
+      //   process.chdir(this.serviceDirPath);
+      // },
+      // 'after:invoke:local:invoke': () => {
+      //   this.log.verbose('after:invoke:local:invoke');
+      // },
     };
   }
 
   private async init() {
-    this.pluginConfig = this.getPluginConfig();
-    if (this.pluginConfig.config) {
-      this.providedRspackConfig = (
-        await import(path.join(this.serviceDirPath, this.pluginConfig.config))
-      ).default;
+    this.pluginOptions = this.getPluginOptions();
+    if (this.pluginOptions.config) {
+      const configPath = path.join(
+        this.serviceDirPath,
+        this.pluginOptions.config
+      );
+      if (!this.serverless.utils.fileExistsSync(configPath)) {
+        throw new this.serverless.classes.Error(
+          `Rspack config does not exist at path: ${configPath}`
+        );
+      }
+      this.providedRspackConfig = (await import(configPath)).default;
     }
     const functions = this.serverless.service.getAllFunctions();
     this.functionEntries = this.buildFunctionEntries(functions);
@@ -211,11 +206,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     this.log.verbose(
       `Determined: filePath: [${safeFilePath}] - fileName: [${fileName}] - ext: [${ext}]`
     );
-    const outputExtension =
-      this.providedRspackConfig?.experiments?.outputModule ||
-      this.pluginConfig.esm
-        ? 'mjs'
-        : 'js';
+    const outputExtension = this.isESM() ? 'mjs' : 'js';
 
     return {
       [name]: {
@@ -223,6 +214,13 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         filename: `[name]${safeFilePath}${fileName}.${outputExtension}`,
       },
     };
+  }
+
+  private isESM() {
+    return (
+      this.providedRspackConfig?.experiments?.outputModule ||
+      this.pluginOptions.esm
+    );
   }
 
   private determineFileParts(handlerFile: string) {
@@ -256,14 +254,13 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   }
 
   private async cleanup(): Promise<void> {
-    if (!this.pluginConfig.keepOutputDirectory) {
+    if (!this.pluginOptions.keepOutputDirectory) {
       await rm(path.join(this.buildOutputFolderPath), { recursive: true });
     }
   }
 
-  private getPluginConfig() {
-    if (this.pluginConfig) return this.pluginConfig;
-    const DEFAULT_CONFIG_OPTIONS: Required<PluginConfiguration> = {
+  private getPluginOptions() {
+    const DEFAULT_CONFIG_OPTIONS: Required<PluginOptions> = {
       config: null,
       esm: true,
       mode: 'production',
@@ -274,10 +271,10 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       tsConfigPath: null,
     };
 
-    let config: Required<PluginConfiguration>;
-    const userProvidedConfig = this.serverless.service.custom['rspack'];
-    if (this.serverless.service.custom['rspack']) {
-      PluginConfigurationSchema.parse(this.serverless.service.custom['rspack']);
+    let config: Required<PluginOptions>;
+    if (this.serverless.service.custom?.['rspack']) {
+      const userProvidedConfig = this.serverless.service.custom['rspack'];
+      PluginOptionsSchema.parse(this.serverless.service.custom['rspack']);
       config = {
         ...DEFAULT_CONFIG_OPTIONS,
         ...userProvidedConfig,

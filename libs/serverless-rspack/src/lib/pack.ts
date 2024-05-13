@@ -42,14 +42,14 @@ export async function pack(this: RspackServerlessPlugin) {
   };
 
   this.log.verbose(
-    `[Performance] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginConfig.zipConcurrency}] `
+    `[Performance] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginOptions.zipConcurrency}] `
   );
 
   await pMap(
     Object.entries(this.functionEntries).map((x) => x[0]),
     zipMapper,
     {
-      concurrency: this.pluginConfig.zipConcurrency,
+      concurrency: this.pluginOptions.zipConcurrency,
     }
   );
 }

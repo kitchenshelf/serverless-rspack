@@ -3,7 +3,7 @@ import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { cwd } from 'node:process';
 import type { RspackServerlessPlugin } from './serverless-rspack.js';
-import type { PluginConfiguration } from './types.js';
+import type { PluginOptions } from './types.js';
 
 export async function bundle(
   this: RspackServerlessPlugin,
@@ -22,7 +22,7 @@ export async function bundle(
   } else {
     config = defaultConfig(
       entries,
-      this.pluginConfig,
+      this.pluginOptions,
       this.buildOutputFolderPath,
       this.log
     );
@@ -32,7 +32,7 @@ export async function bundle(
 
   return new Promise((resolve) => {
     rspack(config, (x, y) => {
-      if (this.pluginConfig.stats) {
+      if (this.pluginOptions.stats) {
         const c = y?.toJson();
         try {
           writeFileSync(
@@ -63,7 +63,7 @@ const esmOutput = {
 
 const defaultConfig: (
   entries: RspackOptions['entry'],
-  buildOptions: PluginConfiguration,
+  buildOptions: PluginOptions,
   workFolderPath: string,
   logger: RspackServerlessPlugin['log']
 ) => RspackOptions = (entries, buildOptions, workFolderPath, logger) => ({

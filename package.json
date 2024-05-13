@@ -43,10 +43,9 @@
     "zod": "^3.23.6"
   },
   "peerDependencies": {
-    "@rspack/core": "latest"
+    "@rspack/core": "0.6.5"
   },
   "nx": {
     "includedScripts": []
   }
 }
-
