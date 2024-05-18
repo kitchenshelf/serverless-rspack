@@ -8,7 +8,6 @@ custom:
   rspack:
     keepOutputDirectory: true
     stats: true
-    config: './rspack.config.js'
     mode: development
     externals:
       - "^@aws-sdk\/.*$"
