@@ -1,3 +1,14 @@
+## 1.0.0-alpha.3 (2024-05-18)
+
+
+### 🩹 Fixes
+
+- **sls-rspack:** prevent mangled exports ([6bea3df](https://github.com/kitchenshelf/serverless-rspack/commit/6bea3df))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.2 (2024-05-13)
 
 
