@@ -274,7 +274,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   private getPluginOptions() {
     const DEFAULT_CONFIG_OPTIONS: Required<PluginOptions> = {
       config: null,
-      esm: true,
+      esm: false,
       mode: 'production',
       stats: false,
       keepOutputDirectory: false,

@@ -134,6 +134,7 @@ const defaultConfig: (
     mangleExports: false,
   },
   output: {
+    library: { type: 'commonjs2' },
     ...(buildOptions.esm ? esmOutput : {}),
     path: workFolderPath,
   },
