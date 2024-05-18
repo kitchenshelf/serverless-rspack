@@ -1,3 +1,15 @@
+## 1.0.0-alpha.4 (2024-05-18)
+
+
+### 🩹 Fixes
+
+- **sls-rspack:** commonjs by default ([c4e9acb](https://github.com/kitchenshelf/serverless-rspack/commit/c4e9acb))
+- **sls-rspack:** externals type set to node-commonjs ([d8c5f19](https://github.com/kitchenshelf/serverless-rspack/commit/d8c5f19))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.3 (2024-05-18)
 
 
