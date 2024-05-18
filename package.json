@@ -2,7 +2,9 @@
   "name": "@serverless-rspack/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "release":"node ./scripts/release.js"
+  },
   "private": true,
   "devDependencies": {
     "@nx/esbuild": "19.0.2",
