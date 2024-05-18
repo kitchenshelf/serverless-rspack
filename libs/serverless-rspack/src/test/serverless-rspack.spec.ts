@@ -185,7 +185,7 @@ describe('RspackServerlessPlugin', () => {
       it('should set default plugin options', async () => {
         const expectedDefaultRspackPluginOptions = {
           config: null,
-          esm: true,
+          esm: false,
           mode: 'production',
           stats: false,
           keepOutputDirectory: false,
@@ -339,11 +339,11 @@ describe('RspackServerlessPlugin', () => {
 
         expect(plugin.functionEntries).toEqual({
           hello1: {
-            filename: '[name]/hello1.mjs',
+            filename: '[name]/hello1.js',
             import: './hello1.ts',
           },
           hello2: {
-            filename: '[name]/hello2.mjs',
+            filename: '[name]/hello2.js',
             import: './hello2.ts',
           },
         });
@@ -389,10 +389,10 @@ describe('RspackServerlessPlugin', () => {
           },
         });
       });
-      it('should create cjs entries', async () => {
+      it('should create mjs entries', async () => {
         const serverless = mockServerlessConfig({
           custom: {
-            rspack: { esm: false },
+            rspack: { esm: true },
             experiments: {},
           },
         });
@@ -405,11 +405,11 @@ describe('RspackServerlessPlugin', () => {
         await plugin.hooks['initialize']();
         expect(plugin.functionEntries).toEqual({
           hello1: {
-            filename: '[name]/hello1.js',
+            filename: '[name]/hello1.mjs',
             import: './hello1.ts',
           },
           hello2: {
-            filename: '[name]/hello2.js',
+            filename: '[name]/hello2.mjs',
             import: './hello2.ts',
           },
         });
