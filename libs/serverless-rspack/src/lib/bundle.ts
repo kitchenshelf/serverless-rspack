@@ -14,6 +14,10 @@ export async function bundle(
     config = {
       ...this.providedRspackConfig,
       entry: entries,
+      optimization: {
+        ...this.providedRspackConfig.optimization,
+        mangleExports: false,
+      },
       output: {
         ...this.providedRspackConfig.output,
         path: this.buildOutputFolderPath,
@@ -125,6 +129,9 @@ const defaultConfig: (
         },
       },
     ],
+  },
+  optimization: {
+    mangleExports: false,
   },
   output: {
     ...(buildOptions.esm ? esmOutput : {}),
