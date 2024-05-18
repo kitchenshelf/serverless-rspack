@@ -133,7 +133,7 @@ custom:
     externals:
       - "^@aws-sdk\/.*$"
       - "^@smithy\/.*$"
-      - 'isin-validator'
+      - '^isin-validator$'
 ```
 
 ---

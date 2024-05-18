@@ -1,15 +1,11 @@
-service: complete-example
+service: esm-example
 
 plugins:
   - '@kitchenshelf/serverless-rspack'
-  - serverless-offline
 
 custom:
   rspack:
-    keepOutputDirectory: true
-    stats: true
-    config: './rspack.config.js'
-    mode: development
+    esm: true
     externals:
       - "^@aws-sdk\/.*$"
       - "^@smithy\/.*$"
