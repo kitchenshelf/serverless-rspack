@@ -94,10 +94,7 @@ const defaultConfig: (
             });
             if (isExternal) {
               logger.verbose(`[Bundle] Marking ${request} as external`);
-              return callback(
-                null,
-                buildOptions.esm ? 'module ' : 'commonjs ' + request
-              );
+              return callback(null, 'node-commonjs ' + request);
             }
             callback();
           },
