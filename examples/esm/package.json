@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@kitchenshelf/serverless-rspack": "../../dist/libs/serverless-rspack",
-    "@rspack/core": "^0.6.1",
+    "@rspack/core": "1.0.0-alpha.1",
     "@types/node": "^18.7.21",
     "serverless": "^3.22.0",
     "serverless-offline": "^10.2.1",

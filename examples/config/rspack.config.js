@@ -14,7 +14,7 @@ const config = (serverless) => {
     },
     resolve: {
       extensions: ['...', '.ts', '.tsx', '.jsx'],
-      // tsConfigPath: path.resolve(cwd(), "tsconfig.app.json"),
+      // tsConfig: path.resolve(cwd(), "tsconfig.app.json"),
     },
     externals: [
       'uuid',

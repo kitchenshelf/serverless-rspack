@@ -79,9 +79,9 @@ const defaultConfig: (
   },
   resolve: {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
-    ...(buildOptions.tsConfigPath
+    ...(buildOptions.tsConfig
       ? {
-          tsConfigPath: path.resolve(cwd(), buildOptions.tsConfigPath),
+          tsConfig: path.resolve(cwd(), buildOptions.tsConfig),
         }
       : {}),
   },
