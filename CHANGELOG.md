@@ -1,3 +1,14 @@
+## 1.0.0-alpha.5 (2024-07-08)
+
+
+### 🚀 Features
+
+- **sls-rspack:** update rspack dep ([cde2b15](https://github.com/kitchenshelf/serverless-rspack/commit/cde2b15))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.4 (2024-05-18)
 
 
