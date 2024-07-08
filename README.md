@@ -72,7 +72,7 @@ See [example folder](../../examples) for example plugin option configuration.
 | `config`              | Relative rspack config path                                                                                                            | `undefined`  |
 | `esm`                 | Output format will be ESM (experimental)                                                                                               | `false`      |
 | `mode`                | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode)                  | `production` |
-| `tsConfigPath`        | Relative path to your tsconfig                                                                                                         | `undefined`  |
+| `tsConfig`            | Relative path to your tsconfig                                                                                                         | `undefined`  |
 | `externals`           | Provides a way of excluding dependencies from the output bundles                                                                       | `undefined`  |
 
 #### Default Rspack Options

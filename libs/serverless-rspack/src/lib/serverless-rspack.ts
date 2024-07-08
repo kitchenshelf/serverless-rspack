@@ -280,7 +280,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       keepOutputDirectory: false,
       zipConcurrency: Infinity,
       externals: null,
-      tsConfigPath: null,
+      tsConfig: null,
     };
 
     let config: Required<PluginOptions>;

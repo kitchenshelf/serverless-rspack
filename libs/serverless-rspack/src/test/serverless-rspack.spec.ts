@@ -191,7 +191,7 @@ describe('RspackServerlessPlugin', () => {
           keepOutputDirectory: false,
           zipConcurrency: Infinity,
           externals: null,
-          tsConfigPath: null,
+          tsConfig: null,
         };
         const serverless = mockServerlessConfig();
 
@@ -215,7 +215,7 @@ describe('RspackServerlessPlugin', () => {
           keepOutputDirectory: true,
           zipConcurrency: 8,
           externals: ['test', 'test2'],
-          tsConfigPath: './app.tsconfig.json',
+          tsConfig: './app.tsconfig.json',
         };
 
         const serverless = mockServerlessConfig({

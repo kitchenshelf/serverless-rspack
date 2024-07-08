@@ -8,7 +8,8 @@ custom:
   rspack:
     keepOutputDirectory: true
     stats: true
-    mode: development
+    mode: production
+    tsConfig: './tsconfig.json'
     externals:
       - "^@aws-sdk\/.*$"
       - "^@smithy\/.*$"
