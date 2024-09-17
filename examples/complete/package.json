@@ -8,7 +8,7 @@
     "isin-validator": "^1.1.1"
   },
   "devDependencies": {
-    "@rspack/core": "1.0.0-alpha.1",
+    "@rspack/core": "1.0.5",
     "@types/node": "^18.7.21",
     "serverless": "^3.22.0",
     "serverless-offline": "^10.2.1",
