@@ -5,6 +5,7 @@ plugins:
 
 custom:
   rspack:
+    keepOutputDirectory: true
     esm: true
     externals:
       - "^@aws-sdk\/.*$"
