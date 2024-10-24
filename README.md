@@ -1,6 +1,6 @@
 # ⚡ serverless-rspack
 
-[Serverless Framework](https://www.serverless.com) plugin for zero-config JavaScript and TypeScript code bundling using the high performance Rust-based JavaScript bundler [`rspack`](https://www.rspack.dev/guide/introduction.html)
+[Serverless Framework](https://www.serverless.com) plugin for zero-config JavaScript and TypeScript code bundling using the high performance Rust-based JavaScript bundler [`rspack`](https://rspack.dev/guide/start/introduction)
 
 [![Serverless][ico-serverless]][link-serverless]
 [![Build Status][ico-build]][link-build]
