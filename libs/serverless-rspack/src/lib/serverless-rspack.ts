@@ -24,7 +24,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   serverless: Serverless;
   options: Serverless.Options;
 
-  pluginOptions!: Required<PluginOptions>;
+  pluginOptions!: PluginOptions;
   providedRspackConfig: RspackOptions | undefined;
 
   functionEntries: RspackOptions['entry'] | undefined;
@@ -134,10 +134,10 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   private async init() {
     this.pluginOptions = this.getPluginOptions();
 
-    if (this.pluginOptions.config) {
+    if (this.pluginOptions.config?.path) {
       const configPath = path.join(
         this.serviceDirPath,
-        this.pluginOptions.config
+        this.pluginOptions.config.path
       );
       if (!this.serverless.utils.fileExistsSync(configPath)) {
         throw new this.serverless.classes.Error(
@@ -152,9 +152,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         );
       }
 
-      this.providedRspackConfig = (await import(configPath)).default(
-        this.serverless
-      );
+      this.providedRspackConfig = configFn(this.serverless);
     }
 
     const functions = this.serverless.service.getAllFunctions();
@@ -272,29 +270,8 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   }
 
   private getPluginOptions() {
-    const DEFAULT_CONFIG_OPTIONS: Required<PluginOptions> = {
-      config: null,
-      esm: false,
-      mode: 'production',
-      stats: false,
-      keepOutputDirectory: false,
-      zipConcurrency: Infinity,
-      externals: null,
-      tsConfig: null,
-    };
-
-    let config: Required<PluginOptions>;
-    if (this.serverless.service.custom?.['rspack']) {
-      const userProvidedConfig = this.serverless.service.custom['rspack'];
-      PluginOptionsSchema.parse(this.serverless.service.custom['rspack']);
-      config = {
-        ...DEFAULT_CONFIG_OPTIONS,
-        ...userProvidedConfig,
-      };
-    } else {
-      config = DEFAULT_CONFIG_OPTIONS;
-    }
-
-    return config;
+    return PluginOptionsSchema.parse(
+      this.serverless.service.custom?.['rspack'] ?? {}
+    );
   }
 }

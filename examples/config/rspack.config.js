@@ -4,7 +4,6 @@ const { cwd } = require('node:process');
 
 /** @type {import('@rspack/cli').Configuration} */
 const config = (serverless) => {
-  console.log(serverless);
   return {
     // mode: 'development',
     mode: 'production',

@@ -1,7 +1,15 @@
-import { RspackOptions, rspack } from '@rspack/core';
+import {
+  type RspackOptions,
+  type RspackPluginFunction,
+  type RspackPluginInstance,
+  type WebpackPluginFunction,
+  type WebpackPluginInstance,
+  rspack,
+} from '@rspack/core';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { cwd } from 'node:process';
+import { mergeWithCustomize } from 'webpack-merge';
 import type { RspackServerlessPlugin } from './serverless-rspack.js';
 import type { PluginOptions } from './types.js';
 
@@ -10,19 +18,36 @@ export async function bundle(
   entries: RspackOptions['entry']
 ) {
   let config: RspackOptions;
-  if (this.providedRspackConfig) {
-    config = {
-      ...this.providedRspackConfig,
-      entry: entries,
-      optimization: {
-        ...this.providedRspackConfig.optimization,
-        mangleExports: false,
-      },
-      output: {
-        ...this.providedRspackConfig.output,
-        path: this.buildOutputFolderPath,
-      },
-    };
+
+  if (this.providedRspackConfig && this.pluginOptions.config?.strategy) {
+    this.log.verbose(
+      'Config merge strategy:',
+      this.pluginOptions.config.strategy
+    );
+    if (this.pluginOptions.config.strategy === 'combine') {
+      const baseConfig = defaultConfig(
+        entries,
+        this.pluginOptions,
+        this.buildOutputFolderPath,
+        this.log
+      );
+
+      const mergedConfig: RspackOptions = mergeWithCustomize({
+        customizeArray: mergeArrayUniqueStrategy(this.log),
+      })([baseConfig, this.providedRspackConfig]);
+
+      config = enforcePluginReadOnlyDefaults(
+        mergedConfig,
+        this.buildOutputFolderPath,
+        entries
+      );
+    } else {
+      config = enforcePluginReadOnlyDefaults(
+        this.providedRspackConfig,
+        this.buildOutputFolderPath,
+        entries
+      );
+    }
   } else {
     config = defaultConfig(
       entries,
@@ -136,3 +161,57 @@ const defaultConfig: (
     path: workFolderPath,
   },
 });
+
+function mergeArrayUniqueStrategy(logger: RspackServerlessPlugin['log']) {
+  return (base: unknown, provided: unknown, key: string) => {
+    if (key === 'plugins' && isPlugins(base) && isPlugins(provided)) {
+      const plugins = [...provided];
+      base.forEach((basePlugin) => {
+        const matchedPlugin = provided.find(
+          (providedPlugin) => basePlugin.name === providedPlugin.name
+        );
+        if (matchedPlugin) {
+          logger.warning(
+            `You have provided your own ${matchedPlugin.name}. This will override the default one provided by @kitchenshelf/serverless-rspack.`
+          );
+        } else {
+          plugins.push(basePlugin);
+        }
+      });
+
+      return plugins;
+    }
+    // Fall back to default merging
+    return undefined;
+  };
+}
+
+const enforcePluginReadOnlyDefaults: (
+  config: RspackOptions,
+  buildOutputFolderPath: string,
+  entries: RspackOptions['entry']
+) => RspackOptions = (config, buildOutputFolderPath, entries) => {
+  return {
+    ...config,
+    entry: entries,
+    optimization: {
+      ...config.optimization,
+      mangleExports: false,
+    },
+    output: {
+      ...config.output,
+      path: buildOutputFolderPath,
+    },
+  };
+};
+
+function isPlugins(
+  a: unknown
+): a is (
+  | RspackPluginInstance
+  | RspackPluginFunction
+  | WebpackPluginInstance
+  | WebpackPluginFunction
+)[] {
+  return Array.isArray(a);
+}

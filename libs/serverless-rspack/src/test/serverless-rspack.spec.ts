@@ -184,15 +184,13 @@ describe('RspackServerlessPlugin', () => {
     describe('initialize', () => {
       it('should set default plugin options', async () => {
         const expectedDefaultRspackPluginOptions = {
-          config: null,
           esm: false,
           mode: 'production',
           stats: false,
           keepOutputDirectory: false,
           zipConcurrency: Infinity,
-          externals: null,
-          tsConfig: null,
         };
+
         const serverless = mockServerlessConfig();
 
         const plugin = new RspackServerlessPlugin(
@@ -233,11 +231,10 @@ describe('RspackServerlessPlugin', () => {
         await plugin.hooks['initialize']();
 
         expect(plugin.pluginOptions).toEqual({
-          config: null,
           ...userRspackPluginOptions,
         });
       });
-      it('should load a rspack config from file if `custom.rspack.config` is a string', async () => {
+      it('should load a rspack config from file if `custom.rspack.config.path` is a string', async () => {
         const loadedConfig = () => ({
           mode: 'development',
         });
@@ -250,7 +247,7 @@ describe('RspackServerlessPlugin', () => {
         const serverless = mockServerlessConfig({
           custom: {
             rspack: {
-              config: './rspack.config.js',
+              config: { path: './rspack.config.js' },
             },
           },
         });
@@ -267,11 +264,11 @@ describe('RspackServerlessPlugin', () => {
 
         expect(plugin.providedRspackConfig).toEqual(loadedConfig());
       });
-      it('should error if `custom.rspack.config` does not exist', async () => {
+      it('should error if `custom.rspack.config.path` does not exist', async () => {
         const serverless = mockServerlessConfig({
           custom: {
             rspack: {
-              config: './rspack.config.js',
+              config: { path: './rspack.config.js' },
             },
           },
         });
@@ -292,7 +289,7 @@ describe('RspackServerlessPlugin', () => {
           );
         }
       });
-      it('should error if `custom.rspack.config` does not return a function', async () => {
+      it('should error if `custom.rspack.config.path` does not return a function', async () => {
         const loadedConfig = {
           mode: 'development',
         };
@@ -305,7 +302,7 @@ describe('RspackServerlessPlugin', () => {
         const serverless = mockServerlessConfig({
           custom: {
             rspack: {
-              config: './rspack.config.js',
+              config: { path: './rspack.config.js' },
             },
           },
         });
@@ -363,7 +360,7 @@ describe('RspackServerlessPlugin', () => {
           custom: {
             rspack: {
               esm: false,
-              config: './rspack.config.js',
+              config: { path: './rspack.config.js' },
             },
           },
         });
