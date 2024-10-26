@@ -1,3 +1,14 @@
+## 1.0.0-alpha.7 (2024-10-26)
+
+
+### 🚀 Features
+
+- **sls-rspack:** support partial rspack config fix: formating ([6e26e87](https://github.com/kitchenshelf/serverless-rspack/commit/6e26e87))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.6 (2024-09-17)
 
 
