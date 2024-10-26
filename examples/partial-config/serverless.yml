@@ -1,15 +1,17 @@
-service: complete-example
+service: partial-config
 
 plugins:
   - '@kitchenshelf/serverless-rspack'
   - serverless-offline
 
 custom:
+  SIGNER_SECRET: '___MY_SUPER_SECRET_SIGNER___'
   rspack:
     keepOutputDirectory: true
     stats: true
     config:
       path: './rspack.config.js'
+      strategy: 'combine'
 
 provider:
   name: aws

@@ -24,7 +24,7 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 - [Plugin Options](#plugin-options)
   - [Examples](#examples)
   - [Options](#options)
-    - [Default Rspack Options](#default-rspack-options)
+    - [Read-only default Rspack Options](#read-only-default-rspack-options)
 - [Supported Runtimes](#supported-runtimes)
 - [Advanced Configuration](#advanced-configuration)
   - [External Dependencies](#external-dependencies)
@@ -54,7 +54,7 @@ By default, no plugin options is required, but you can override the reasonable d
 ```yml
 custom:
   rspack:
-    mode: 'production',
+    mode: 'production'
     esm: true
 ```
 
@@ -64,18 +64,20 @@ See [example folder](../../examples) for example plugin option configuration.
 
 ### Plugin Options
 
-| Option                | Description                                                                                                                            | Default      |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| `zipConcurrency`      | The number of concurrent zip operations to run at once. eg. `8`. _NOTE_: This can be memory intensive and could produce slower builds. | `Infinity`   |
-| `keepOutputDirectory` | Keeps the `.rspack` output folder. Useful for debugging.                                                                               | `false`      |
-| `stats`               | Generate packaging information that can be used to analyze module dependencies and optimize compilation speed.                         | `false`      |
-| `config`              | Relative rspack config path                                                                                                            | `undefined`  |
-| `esm`                 | Output format will be ESM (experimental)                                                                                               | `false`      |
-| `mode`                | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode)                  | `production` |
-| `tsConfig`            | Relative path to your tsconfig                                                                                                         | `undefined`  |
-| `externals`           | Provides a way of excluding dependencies from the output bundles                                                                       | `undefined`  |
+| Option                        | Description                                                                                                                            | Default      |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `zipConcurrency`              | The number of concurrent zip operations to run at once. eg. `8`. _NOTE_: This can be memory intensive and could produce slower builds. | `Infinity`   |
+| `keepOutputDirectory`         | Keeps the `.rspack` output folder. Useful for debugging.                                                                               | `false`      |
+| `stats`                       | Generate packaging information that can be used to analyze module dependencies and optimize compilation speed.                         | `false`      |
+| [`config`](#config-file)      | rspack config options                                                                                                                  | `undefined`  |
+| `config.path`                 | Relative rspack config path                                                                                                            | `undefined`  |
+| [`config.strategy`](#config-file-merge-strategies) | Strategy to use when a rspack config is provided                                                                  | `override`   |
+| `esm`                         | Output format will be ESM (experimental)                                                                                               | `false`      |
+| `mode`                        | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode)                  | `production` |
+| `tsConfig`                    | Relative path to your tsconfig                                                                                                         | `undefined`  |
+| [`externals`](#external-dependencies) | Provides a way of excluding dependencies from the output bundles                                                               | `undefined`  |
 
-#### Default Rspack Options
+#### Read-only default Rspack Options
 
 The following `rspack` options are automatically set and **cannot** be overwritten.
 
@@ -112,7 +114,8 @@ Rspack configuration can be defined by a config file.
 ```yml
 custom:
   esbuild:
-    config: './rspack.config.js'
+    config:
+      path: './rspack.config.js'
 ```
 
 ```js
@@ -122,6 +125,23 @@ module.exports = (serverless) => {
   // etc
 };
 ```
+
+#### Config file merge strategies
+
+You can change how the plugin uses a provided config via the `strategy` option:
+
+```yml
+custom:
+  esbuild:
+    config:
+      path: './rspack.config.js'
+      strategy: combine
+```
+
+1. `override`: ***Default*** - Enables power users to provided their own complete Rspack configuration: `rspack.config.js` -> [`PluginReadOnlyDefaults`](#read-only-default-rspack-options)
+2. `combine`: Enables providing partial configuration.  Merges all configuration together: `PluginDefaults` -> `PluginOptions` -> `rspack.config.js` -> [`PluginReadOnlyDefaults`](#read-only-default-rspack-options).
+
+⚠️ **Note: Pay attention to the order in which configuration is combined. Each time the right take precedence. **
 
 ### External Dependencies
 
