@@ -28,6 +28,7 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 - [Supported Runtimes](#supported-runtimes)
 - [Advanced Configuration](#advanced-configuration)
   - [External Dependencies](#external-dependencies)
+- [Known Issues](#known-issues)
 
 ## Install
 
@@ -155,6 +156,11 @@ custom:
       - "^@smithy\/.*$"
       - '^isin-validator$'
 ```
+
+# Known Issues
+
+  - Invoke Local does not work with ESM enabled when using serverless V3: [ISSUE-11308](https://github.com/serverless/serverless/issues/11308#issuecomment-1719297694)
+
 
 ---
 

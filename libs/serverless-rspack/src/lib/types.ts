@@ -28,3 +28,16 @@ export type PluginOptions = z.infer<typeof PluginOptionsSchema>;
 export type RsPackFunctionDefinitionHandler = {
   rspack?: boolean;
 } & Serverless.FunctionDefinitionHandler;
+
+export function isInvokeOptions(
+  options: Serverless.Options
+): options is Serverless.Options & { function: string } {
+  return typeof options.function === 'string';
+}
+
+export type PluginFunctionEntries = {
+  [name: string]: {
+    import: string;
+    filename: string;
+  };
+};

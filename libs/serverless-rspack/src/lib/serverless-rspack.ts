@@ -7,8 +7,14 @@ import type Serverless from 'serverless';
 import type ServerlessPlugin from 'serverless/classes/Plugin';
 import { bundle } from './bundle.js';
 import { SERVERLESS_FOLDER, WORK_FOLDER } from './constants.js';
+import { determineFileParts, isNodeFunction } from './helpers.js';
+import { Initialize } from './hooks/initialize.js';
+import { BeforeInvokeLocalInvoke } from './hooks/invoke-local/before-invoke.js';
+import { AfterPackageCreateDeploymentArtifacts } from './hooks/package/after-create-deployment-artifacts.js';
+import { BeforePackageCreateDeploymentArtifacts } from './hooks/package/before-create-deployment-artifacts.js';
 import { pack } from './pack.js';
 import {
+  PluginFunctionEntries,
   PluginOptions,
   PluginOptionsSchema,
   RsPackFunctionDefinitionHandler,
@@ -23,18 +29,16 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   log: ServerlessPlugin.Logging['log'];
   serverless: Serverless;
   options: Serverless.Options;
-
-  pluginOptions!: PluginOptions;
-  providedRspackConfig: RspackOptions | undefined;
-
-  functionEntries: RspackOptions['entry'] | undefined;
-
   hooks: ServerlessPlugin.Hooks;
+
+  providedRspackConfig: RspackOptions | undefined;
+  pluginOptions!: PluginOptions;
+  functionEntries!: PluginFunctionEntries;
 
   timings = new Map<string, number>();
 
-  #bundle = bundle.bind(this);
-  #pack = pack.bind(this);
+  protected bundle = bundle.bind(this);
+  protected pack = pack.bind(this);
 
   constructor(
     serverless: Serverless,
@@ -61,108 +65,24 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     );
 
     this.hooks = {
-      initialize: async () => {
-        await this.init();
-      },
-      // 'before:run:run': async () => {
-      // this.log.verbose('before:run:run');
-      // await this.#bundle(this.functionEntries);
-      // },
-      // 'before:offline:start': () => {
-      //   this.log.verbose('before:offline:start');
-      // },
-      // 'before:offline:start:init': () => {
-      //   this.log.verbose('before:offline:start:init');
-      // },
-      'before:package:createDeploymentArtifacts': async () => {
-        this.log.verbose('before:package:createDeploymentArtifacts');
-        this.timings.set(
-          'before:package:createDeploymentArtifacts',
-          Date.now()
-        );
-
-        if (
-          !this.functionEntries ||
-          Object.entries(this.functionEntries).length === 0
-        ) {
-          throw new this.serverless.classes.Error(
-            `No function entries provided - try running in verbose mode to see expected entries`
-          );
-        }
-        await this.#bundle(this.functionEntries);
-        await this.#pack();
-      },
-      'after:package:createDeploymentArtifacts': async () => {
-        this.log.verbose('after:package:createDeploymentArtifacts');
-        await this.cleanup();
-        this.log.verbose(
-          `[Performance] Hook createDeploymentArtifacts ${
-            this.serverless.service.service
-          } [${
-            Date.now() -
-            this.timings.get('before:package:createDeploymentArtifacts')!
-          } ms]`
-        );
-      },
+      initialize: Initialize.bind(this),
+      'before:package:createDeploymentArtifacts':
+        BeforePackageCreateDeploymentArtifacts.bind(this),
+      'after:package:createDeploymentArtifacts':
+        AfterPackageCreateDeploymentArtifacts.bind(this),
       // 'before:deploy:function:packageFunction': () => {
       //   this.log.verbose('after:deploy:function:packageFunction');
       // },
       // 'after:deploy:function:packageFunction': () => {
       //   this.log.verbose('after:deploy:function:packageFunction');
       // },
-      // 'before:invoke:local:invoke': async () => {
-      //   this.log.verbose('before:invoke:local:invoke');
-      //   this.log.verbose(this.options);
-      //   // @ts-ignore
-      //   const invokeFunc: string =
-      //     this.serverless.processedInput.options.function;
-      //   this.log.verbose(invokeFunc);
-      //   await this.#bundle({
-      //     [invokeFunc]: (this.functionEntries as any)[invokeFunc],
-      //   });
-
-      //   this.serviceDirPath = this.buildOutputFolderPath;
-      //   this.serverless.config.servicePath = this.buildOutputFolderPath;
-      //   process.chdir(this.serviceDirPath);
-      // },
-      // 'after:invoke:local:invoke': () => {
-      //   this.log.verbose('after:invoke:local:invoke');
-      // },
+      'before:invoke:local:invoke': BeforeInvokeLocalInvoke.bind(this),
     };
   }
 
-  private async init() {
-    this.pluginOptions = this.getPluginOptions();
-
-    if (this.pluginOptions.config?.path) {
-      const configPath = path.join(
-        this.serviceDirPath,
-        this.pluginOptions.config.path
-      );
-      if (!this.serverless.utils.fileExistsSync(configPath)) {
-        throw new this.serverless.classes.Error(
-          `Rspack config does not exist at path: ${configPath}`
-        );
-      }
-      const configFn = (await import(configPath)).default;
-
-      if (typeof configFn !== 'function') {
-        throw new this.serverless.classes.Error(
-          `Config located at ${configPath} does not return a function. See for reference: https://github.com/kitchenshelf/serverless-rspack/blob/main/README.md#config-file`
-        );
-      }
-
-      this.providedRspackConfig = configFn(this.serverless);
-    }
-
-    const functions = this.serverless.service.getAllFunctions();
-    this.functionEntries = this.buildFunctionEntries(functions);
-    this.log.verbose('Function Entries:', this.functionEntries);
-  }
-
-  private buildFunctionEntries(functions: string[]) {
+  protected buildFunctionEntries(functions: string[]) {
     this.log.verbose('Building function entries for: ', functions);
-    let entries = {};
+    let entries: PluginFunctionEntries = {};
 
     functions.forEach((functionName) => {
       const functionDefinitionHandler = this.serverless.service.getFunction(
@@ -170,7 +90,10 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       ) as RsPackFunctionDefinitionHandler;
       if (
         functionDefinitionHandler.rspack ||
-        this.isNodeFunction(functionDefinitionHandler)
+        isNodeFunction(
+          functionDefinitionHandler,
+          this.serverless.service.provider.runtime
+        )
       ) {
         // TODO: support container images
         const entry = this.getEntryForFunction(
@@ -186,6 +109,18 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     return entries;
   }
 
+  protected async cleanup(): Promise<void> {
+    if (!this.pluginOptions.keepOutputDirectory) {
+      await rm(path.join(this.buildOutputFolderPath), { recursive: true });
+    }
+  }
+
+  protected getPluginOptions() {
+    return PluginOptionsSchema.parse(
+      this.serverless.service.custom?.['rspack'] ?? {}
+    );
+  }
+
   private getEntryForFunction(
     name: string,
     serverlessFunction: Serverless.FunctionDefinitionHandler
@@ -197,7 +132,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
 
     const handlerFile = this.getHandlerFile(handler);
 
-    const { filePath, fileName } = this.determineFileParts(handlerFile);
+    const { filePath, fileName } = determineFileParts(handlerFile);
     const safeFilePath = filePath ? '/' + filePath + '/' : '/';
 
     const files = readdirSync(`./${filePath}`);
@@ -226,22 +161,6 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     };
   }
 
-  private isESM() {
-    return (
-      this.providedRspackConfig?.experiments?.outputModule ||
-      this.pluginOptions.esm
-    );
-  }
-
-  private determineFileParts(handlerFile: string) {
-    const regex = /^(.*)\/([^/]+)$/;
-    const result = regex.exec(handlerFile);
-
-    const filePath = result?.[1] ?? '';
-    const fileName = result?.[2] ?? handlerFile;
-    return { filePath, fileName };
-  }
-
   private getHandlerFile(handler: string) {
     // Check if handler is a well-formed path based handler.
     const handlerEntry = /(.*)\..*?$/.exec(handler);
@@ -251,27 +170,10 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     throw new this.serverless.classes.Error(`malformed handler: ${handler}`);
   }
 
-  /**
-   * Checks if the runtime for the given function is nodejs.
-   * If the runtime is not set , checks the global runtime.
-   * @param {Serverless.FunctionDefinitionHandler} func the function to be checked
-   * @returns {boolean} true if the function/global runtime is nodejs; false, otherwise
-   */
-  private isNodeFunction(func: Serverless.FunctionDefinitionHandler): boolean {
-    const runtime = func.runtime || this.serverless.service.provider.runtime;
-
-    return typeof runtime === 'string' && runtime.startsWith('node');
-  }
-
-  private async cleanup(): Promise<void> {
-    if (!this.pluginOptions.keepOutputDirectory) {
-      await rm(path.join(this.buildOutputFolderPath), { recursive: true });
-    }
-  }
-
-  private getPluginOptions() {
-    return PluginOptionsSchema.parse(
-      this.serverless.service.custom?.['rspack'] ?? {}
+  private isESM() {
+    return (
+      this.providedRspackConfig?.experiments?.outputModule ||
+      this.pluginOptions.esm
     );
   }
 }
