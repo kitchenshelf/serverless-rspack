@@ -7,6 +7,7 @@ export async function handler(event: string) {
   return {
     statusCode: lib1Export(!!isInvalid),
     body: JSON.stringify({
+      handler: 'App3',
       message: isInvalid ? 'ISIN is invalid!' : 'ISIN is fine!',
       input: event,
     }),
