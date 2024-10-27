@@ -1,3 +1,14 @@
+## 1.0.0-alpha.8 (2024-10-27)
+
+
+### 🚀 Features
+
+- **sls-rspack:** enable invoke local ([1a26470](https://github.com/kitchenshelf/serverless-rspack/commit/1a26470))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.7 (2024-10-26)
 
 
