@@ -13,6 +13,7 @@ import { BeforeInvokeLocalInvoke } from './hooks/invoke-local/before-invoke.js';
 import { AfterPackageCreateDeploymentArtifacts } from './hooks/package/after-create-deployment-artifacts.js';
 import { BeforePackageCreateDeploymentArtifacts } from './hooks/package/before-create-deployment-artifacts.js';
 import { pack } from './pack.js';
+import { scripts } from './scripts.js';
 import {
   PluginFunctionEntries,
   PluginOptions,
@@ -24,7 +25,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   serviceDirPath: string;
   buildOutputFolder: string;
   buildOutputFolderPath: string;
-  packageOutputPath: string;
+  packageOutputFolder: string;
 
   log: ServerlessPlugin.Logging['log'];
   serverless: Serverless;
@@ -39,6 +40,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
 
   protected bundle = bundle.bind(this);
   protected pack = pack.bind(this);
+  protected scripts = scripts.bind(this);
 
   constructor(
     serverless: Serverless,
@@ -57,7 +59,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     this.options = options;
     this.log = logging.log;
     this.serviceDirPath = this.serverless.config.serviceDir;
-    this.packageOutputPath = SERVERLESS_FOLDER;
+    this.packageOutputFolder = SERVERLESS_FOLDER;
     this.buildOutputFolder = WORK_FOLDER;
     this.buildOutputFolderPath = path.join(
       this.serviceDirPath,
@@ -81,7 +83,9 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   }
 
   protected buildFunctionEntries(functions: string[]) {
-    this.log.verbose('Building function entries for: ', functions);
+    this.log.verbose(
+      `[sls-rspack] Building function entries for: ${functions}`
+    );
     let entries: PluginFunctionEntries = {};
 
     functions.forEach((functionName) => {
@@ -127,7 +131,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   ) {
     const handler = serverlessFunction.handler;
     this.log.verbose(
-      `Processing function ${name} with provided handler ${handler}`
+      `[sls-rspack] Processing function ${name} with provided handler ${handler}`
     );
 
     const handlerFile = this.getHandlerFile(handler);
@@ -149,7 +153,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     const ext = path.extname(file);
 
     this.log.verbose(
-      `Determined: filePath: [${safeFilePath}] - fileName: [${fileName}] - ext: [${ext}]`
+      `[sls-rspack] Determined: filePath: [${safeFilePath}] - fileName: [${fileName}] - ext: [${ext}]`
     );
     const outputExtension = this.isESM() ? 'mjs' : 'js';
 

@@ -2,7 +2,7 @@ import type { RspackServerlessPlugin } from '../../serverless-rspack.js';
 import { isInvokeOptions } from '../../types.js';
 
 export async function BeforeInvokeLocalInvoke(this: RspackServerlessPlugin) {
-  this.log.verbose('before:invoke:local:invoke');
+  this.log.verbose('[sls-rspack] before:invoke:local:invoke');
 
   if (!isInvokeOptions(this.options)) {
     throw new this.serverless.classes.Error(
@@ -21,6 +21,8 @@ export async function BeforeInvokeLocalInvoke(this: RspackServerlessPlugin) {
   await this.bundle({
     [invokeFunc]: this.functionEntries[invokeFunc],
   });
+
+  await this.scripts();
 
   this.serverless.config.servicePath =
     this.serviceDirPath + '/' + this.buildOutputFolder + '/' + invokeFunc;

@@ -16,12 +16,12 @@ export async function pack(this: RspackServerlessPlugin) {
 
     const artifactPath = path.join(
       this.serviceDirPath,
-      this.packageOutputPath,
+      this.packageOutputFolder,
       zipName
     );
     try {
+      this.log.verbose(`[Pack] Compressing ${name} to ${artifactPath}`);
       const startZip = Date.now();
-
       await zipDirectory(
         this.serviceDirPath + '/' + this.buildOutputFolder + '/' + name,
         artifactPath
@@ -34,7 +34,9 @@ export async function pack(this: RspackServerlessPlugin) {
         } -  ${humanSize(size)} [${Date.now() - startZip} ms]`
       );
     } catch (error) {
-      this.log.error(error);
+      throw new this.serverless.classes.Error(
+        `[Pack] Failed to zip ${name}: ${error}`
+      );
     }
     loadedFunc.package = {
       artifact: artifactPath,
@@ -42,7 +44,7 @@ export async function pack(this: RspackServerlessPlugin) {
   };
 
   this.log.verbose(
-    `[Performance] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginOptions.zipConcurrency}] `
+    `[Pack] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginOptions.zipConcurrency}] `
   );
 
   await pMap(

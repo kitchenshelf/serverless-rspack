@@ -21,8 +21,7 @@ export async function bundle(
 
   if (this.providedRspackConfig && this.pluginOptions.config?.strategy) {
     this.log.verbose(
-      'Config merge strategy:',
-      this.pluginOptions.config.strategy
+      `[Bundle] Config merge strategy: ${this.pluginOptions.config.strategy}`
     );
     if (this.pluginOptions.config.strategy === 'combine') {
       const baseConfig = defaultConfig(
@@ -56,8 +55,8 @@ export async function bundle(
       this.log
     );
   }
-  this.log.verbose('Bundling with config: ', config);
-  const startPack = Date.now();
+  this.log.verbose(`[Bundle] Bundling with config: ${JSON.stringify(config)}`);
+  const startBundle = Date.now();
 
   return new Promise((resolve) => {
     rspack(config, (x, y) => {
@@ -69,13 +68,13 @@ export async function bundle(
             JSON.stringify(c)
           );
         } catch (error) {
-          this.log?.error('Failed to write stats file: ', error);
+          this.log?.error(`[Bundle] Failed to write stats file: ${error}`);
         }
       }
       this.log.verbose(
-        `[Performance] Bundle service ${this.serverless.service.service} [${
-          Date.now() - startPack
-        } ms]`
+        `[Performance] Bundle total execution time for service ${
+          this.serverless.service.service
+        } [${Date.now() - startBundle} ms]`
       );
       resolve('Success!'); // Yay! Everything went well!
     });
@@ -172,7 +171,7 @@ function mergeArrayUniqueStrategy(logger: RspackServerlessPlugin['log']) {
         );
         if (matchedPlugin) {
           logger.warning(
-            `You have provided your own ${matchedPlugin.name}. This will override the default one provided by @kitchenshelf/serverless-rspack.`
+            `[Bundle] You have provided your own ${matchedPlugin.name}. This will override the default one provided by @kitchenshelf/serverless-rspack.`
           );
         } else {
           plugins.push(basePlugin);

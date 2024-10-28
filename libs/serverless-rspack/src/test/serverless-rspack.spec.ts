@@ -58,7 +58,7 @@ describe('RspackServerlessPlugin', () => {
       mockServerlessConfig().config.serviceDir
     );
 
-    expect(plugin.packageOutputPath).toEqual('.serverless');
+    expect(plugin.packageOutputFolder).toEqual('.serverless');
     expect(plugin.buildOutputFolder).toEqual('.rspack');
     expect(plugin.buildOutputFolderPath).toEqual('/workDir/.rspack');
   });

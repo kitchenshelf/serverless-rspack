@@ -12,11 +12,13 @@ Example serverless projects are under the [/examples](/examples) directory.
 
 For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 
+
 ## Features
 
 - From zero to hero: configuration possibilities range from zero-config to fully customizable
 - Supports `sls package`, `sls deploy`
 - Build and runtime performance at its core
+
 
 ## Table of Contents
 
@@ -29,6 +31,7 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 - [Advanced Configuration](#advanced-configuration)
   - [External Dependencies](#external-dependencies)
 - [Known Issues](#known-issues)
+
 
 ## Install
 
@@ -47,6 +50,7 @@ Add the following plugin to your `serverless.yml`:
 plugins:
   - @kitchenshelf/serverless-rspack
 ```
+
 
 ## Plugin Options
 
@@ -70,13 +74,14 @@ See [example folder](../../examples) for example plugin option configuration.
 | `zipConcurrency`              | The number of concurrent zip operations to run at once. eg. `8`. _NOTE_: This can be memory intensive and could produce slower builds. | `Infinity`   |
 | `keepOutputDirectory`         | Keeps the `.rspack` output folder. Useful for debugging.                                                                               | `false`      |
 | `stats`                       | Generate packaging information that can be used to analyze module dependencies and optimize compilation speed.                         | `false`      |
-| [`config`](#config-file)      | rspack config options                                                                                                                  | `undefined`  |
-| `config.path`                 | Relative rspack config path                                                                                                            | `undefined`  |
-| [`config.strategy`](#config-file-merge-strategies) | Strategy to use when a rspack config is provided                                                                  | `override`   |
-| `esm`                         | Output format will be ESM (experimental)                                                                                               | `false`      |
-| `mode`                        | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode)                  | `production` |
-| `tsConfig`                    | Relative path to your tsconfig                                                                                                         | `undefined`  |
-| [`externals`](#external-dependencies) | Provides a way of excluding dependencies from the output bundles                                                               | `undefined`  |
+| [`config`](#config-file)      | rspack config options.                                                                                                                 | `undefined`  |
+| `config.path`                 | Relative rspack config path.                                                                                                           | `undefined`  |
+| [`config.strategy`](#config-file-merge-strategies) | Strategy to use when a rspack config is provided.                                                                 | `override`   |
+| `esm`                         | Output format will be ESM (experimental).                                                                                              | `false`      |
+| `mode`                        | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode).                 | `production` |
+| `tsConfig`                    | Relative path to your tsconfig.                                                                                                        | `undefined`  |
+| [`externals`](#external-dependencies) | Provides a way of excluding dependencies from the output bundles.                                                              | `undefined`  |
+| [`scripts`](#scripts)         | Array of scripts to execute after your code has been bundled by rspack.                                                                | `undefined`  |
 
 #### Read-only default Rspack Options
 
@@ -93,6 +98,8 @@ The following `rspack` options are automatically set and **cannot** be overwritt
 | -------- | --------------------------------------------------------------------------------------------- | ----------- |
 | `rspack` | Set this property on a function definition to force the handler to be processed by the plugin | `undefined` |
 
+
+
 ## Supported Runtimes
 
 This plugin will automatically process any function that has a runtime that starts with `node` i.e `nodejs20.x`
@@ -105,6 +112,7 @@ If you wish to force a function to be process set `rspack: true` on a function d
 
 ⚠️ **Note: this will only work if your custom runtime and function are written in JavaScript/Typescript.
 Make sure you know what you are doing when this option is set to `true`**
+
 
 ## Advanced Configuration
 
@@ -156,8 +164,38 @@ custom:
       - "^@smithy\/.*$"
       - '^isin-validator$'
 ```
+### Scripts
 
-# Known Issues
+Run custom shell commands after your code has been bundled by rspack. 
+
+**Order**: `bundle` -> `scripts` -> `package`
+
+Scripts are executed from the root of the service directory. This is useful for modifying the output of the build before it is packaged.
+
+#### Usage
+
+```yml
+custom:
+  rspack:
+    externals: ['^@aws-sdk/.*$', '^sharp$'],
+    scripts:
+      - 'echo "First script"'
+      - 'cd $KS_BUILD_OUTPUT_FOLDER/App1 && npx npm init -y && npm pkg delete main && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
+      - 'echo "Last script"'
+```
+⚠️ **Note: Scripts run sequentially and will fail the build if any errors occur in any of the scripts.**
+
+#### Environment Variables
+
+The following environment variables are available to your scripts:
+
+- `process.env`: All system environment variables.
+- `KS_SERVICE_DIR`: The absolute path to the service directory (e.g. `/Users/user/code/my-service`).
+- `KS_BUILD_OUTPUT_FOLDER`: The name of the build output folder (e.g. `.rspack`).
+- `KS_PACKAGE_OUTPUT_FOLDER`: The name of the package output folder (e.g. `.serverless`).
+
+
+## Known Issues
 
   - Invoke Local does not work with ESM enabled when using serverless V3: [ISSUE-11308](https://github.com/serverless/serverless/issues/11308#issuecomment-1719297694)
 

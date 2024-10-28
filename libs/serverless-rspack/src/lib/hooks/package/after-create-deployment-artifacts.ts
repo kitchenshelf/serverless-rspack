@@ -3,7 +3,7 @@ import type { RspackServerlessPlugin } from '../../serverless-rspack.js';
 export async function AfterPackageCreateDeploymentArtifacts(
   this: RspackServerlessPlugin
 ) {
-  this.log.verbose('after:package:createDeploymentArtifacts');
+  this.log.verbose('[sls-rspack] after:package:createDeploymentArtifacts');
   await this.cleanup();
   this.log.verbose(
     `[Performance] Hook createDeploymentArtifacts ${
