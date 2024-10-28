@@ -35,5 +35,5 @@ export async function Initialize(this: RspackServerlessPlugin) {
       `No functions detected in service - you can remove this plugin from your service`
     );
   }
-  this.log.verbose('Function Entries:', this.functionEntries);
+  this.log.verbose('[sls-rspack] Function Entries:', this.functionEntries);
 }

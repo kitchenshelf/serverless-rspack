@@ -12,6 +12,7 @@ export const PluginOptionsSchema = z.object({
     })
     .optional()
     .nullable(),
+  scripts: z.array(z.string()).optional().nullable(),
   // [START] Rspack influenced - Ignored if config file is provided with `override` strategy
   esm: z.boolean().optional().default(false),
   mode: z

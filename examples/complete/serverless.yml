@@ -14,6 +14,12 @@ custom:
       - "^@aws-sdk\/.*$"
       - "^@smithy\/.*$"
       - '^isin-validator$'
+      - '^sharp$'
+    scripts:
+      - 'echo "First script"'
+      - 'cd $KS_BUILD_OUTPUT_FOLDER/app3 && npx npm init -y && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
+      - 'cp ./src/my-image.jpeg $KS_BUILD_OUTPUT_FOLDER/app3'
+      - 'echo "Last script"'
 
 provider:
   name: aws

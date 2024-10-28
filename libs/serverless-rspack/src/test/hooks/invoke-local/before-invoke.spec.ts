@@ -1,4 +1,5 @@
 import { bundle } from '../../../lib/bundle.js';
+import { scripts } from '../../../lib/scripts.js';
 import { RspackServerlessPlugin } from '../../../lib/serverless-rspack.js';
 import {
   functions,
@@ -9,6 +10,10 @@ import {
 
 jest.mock('../../../lib/bundle', () => ({
   bundle: jest.fn(),
+}));
+
+jest.mock('../../../lib/scripts', () => ({
+  scripts: jest.fn(),
 }));
 
 jest.mock('node:fs', () => ({
@@ -40,11 +45,15 @@ describe('before:invoke:local:invoke hook', () => {
     await plugin.hooks['before:invoke:local:invoke']();
 
     expect(logger.log.verbose).toHaveBeenCalledWith(
-      'before:invoke:local:invoke'
+      '[sls-rspack] before:invoke:local:invoke'
     );
     expect(bundle).toHaveBeenCalledWith({
       hello1: { import: './hello1.js', filename: 'hello1.js' },
     });
+    expect(scripts).toHaveBeenCalled();
+    expect(jest.mocked(bundle).mock.invocationCallOrder[0]).toBeLessThan(
+      jest.mocked(scripts).mock.invocationCallOrder[0]
+    );
     expect(serverless.config.servicePath).toBe('/workDir/.rspack/hello1');
   });
 
