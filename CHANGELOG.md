@@ -1,3 +1,14 @@
+## 1.0.0-alpha.9 (2024-10-28)
+
+
+### 🚀 Features
+
+- **sls-rspack:** support user supplied scripts ([22eac3a](https://github.com/kitchenshelf/serverless-rspack/commit/22eac3a))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.8 (2024-10-27)
 
 
