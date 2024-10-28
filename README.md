@@ -82,6 +82,7 @@ See [example folder](../../examples) for example plugin option configuration.
 | `tsConfig`                    | Relative path to your tsconfig.                                                                                                        | `undefined`  |
 | [`externals`](#external-dependencies) | Provides a way of excluding dependencies from the output bundles.                                                              | `undefined`  |
 | [`scripts`](#scripts)         | Array of scripts to execute after your code has been bundled by rspack.                                                                | `undefined`  |
+| [`doctor`](#doctor)           | Enable the `Rsdoctor` plugin.                                                                                                          | `undefined`  |
 
 #### Read-only default Rspack Options
 
@@ -164,6 +165,7 @@ custom:
       - "^@smithy\/.*$"
       - '^isin-validator$'
 ```
+
 ### Scripts
 
 Run custom shell commands after your code has been bundled by rspack. 
@@ -194,6 +196,29 @@ The following environment variables are available to your scripts:
 - `KS_BUILD_OUTPUT_FOLDER`: The name of the build output folder (e.g. `.rspack`).
 - `KS_PACKAGE_OUTPUT_FOLDER`: The name of the package output folder (e.g. `.serverless`).
 
+### Doctor
+
+[Rsdoctor](https://rsdoctor.dev/guide/start/intro) is a one-stop tool for diagnosing and analyzing the build process and build artifacts.
+
+The serverless-rspack plugin will automatically enable the `Rsdoctor` plugin when the `doctor` option is provided.
+
+```yml
+custom:
+  rspack:
+    doctor: true
+```
+
+You can also provide an `outputDirectory` to specify where the report should be saved. By default, the report will be saved in the `.rspack` folder.
+
+```yml
+custom:
+  rspack:
+    doctor:
+      doctor: true
+      outputDirectory: ./doctor-report
+```
+
+⚠️ **Note: Rsdoctor is configured to run in [`brief`](https://rsdoctor.dev/guide/start/cicd#enabling-brief-mode) mode. If you want to use another mode, you can register `RsdoctorRspackPlugin` manually using the [rspack config option](#config-file).**
 
 ## Known Issues
 

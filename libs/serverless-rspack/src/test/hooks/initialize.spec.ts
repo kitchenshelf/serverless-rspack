@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { RspackServerlessPlugin } from '../../lib/serverless-rspack.js';
 import { logger, mockOptions, mockServerlessConfig } from '../test-utils.js';
+import { PluginOptions } from '../../lib/types.js';
 
 jest.mock('node:fs', () => ({
   readdirSync: () => ['hello1.ts', 'hello2.ts'],
@@ -31,10 +32,11 @@ describe('initialize hook', () => {
   });
 
   it('should set user defined plugin options', async () => {
-    const userRspackPluginOptions = {
+    const userRspackPluginOptions: PluginOptions = {
       esm: false,
       mode: 'development',
       stats: true,
+      doctor: true,
       keepOutputDirectory: true,
       zipConcurrency: 8,
       externals: ['test', 'test2'],

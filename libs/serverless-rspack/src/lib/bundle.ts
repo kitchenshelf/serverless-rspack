@@ -1,3 +1,4 @@
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import {
   type RspackOptions,
   type RspackPluginFunction,
@@ -55,7 +56,9 @@ export async function bundle(
       this.log
     );
   }
-  this.log.verbose(`[Bundle] Bundling with config: ${JSON.stringify(config)}`);
+  this.log.verbose(
+    `[Bundle] Bundling with config: ${safelyStringifyConfig(config)}`
+  );
   const startBundle = Date.now();
 
   return new Promise((resolve) => {
@@ -131,6 +134,7 @@ const defaultConfig: (
     }),
     new rspack.ProgressPlugin({}),
     new rspack.node.NodeTargetPlugin(),
+    createDoctorPlugin(buildOptions),
   ].filter(Boolean),
 
   module: {
@@ -213,4 +217,48 @@ function isPlugins(
   | WebpackPluginFunction
 )[] {
   return Array.isArray(a);
+}
+
+function createDoctorPlugin(buildOptions: PluginOptions) {
+  const isEnabled =
+    enabledViaSimpleConfig(buildOptions.doctor) ||
+    enabledViaConfigObject(buildOptions.doctor);
+
+  return isEnabled
+    ? new RsdoctorRspackPlugin({
+        disableClientServer: true,
+        mode: 'brief',
+        reportDir: getReportDir(buildOptions.doctor),
+      })
+    : null;
+}
+
+function enabledViaSimpleConfig(
+  doctor: PluginOptions['doctor']
+): doctor is boolean {
+  return typeof doctor === 'boolean' && doctor === true;
+}
+
+function enabledViaConfigObject(
+  doctor: PluginOptions['doctor']
+): doctor is Exclude<PluginOptions['doctor'], boolean | null | undefined> {
+  return (
+    typeof doctor === 'object' && doctor !== null && doctor.enable === true
+  );
+}
+
+function getReportDir(doctor: PluginOptions['doctor']) {
+  if (enabledViaConfigObject(doctor) && doctor.outputDirectory) {
+    return doctor.outputDirectory;
+  }
+  return undefined;
+}
+
+function safelyStringifyConfig(config: RspackOptions) {
+  return JSON.stringify(config, (key, value) => {
+    if (key === 'plugins') {
+      return value.map((plugin: any) => plugin.constructor.name);
+    }
+    return value;
+  });
 }
