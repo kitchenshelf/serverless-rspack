@@ -9,6 +9,7 @@ custom:
   rspack:
     keepOutputDirectory: true
     stats: true
+    doctor: true
     config:
       path: './rspack.config.js'
       strategy: 'combine'

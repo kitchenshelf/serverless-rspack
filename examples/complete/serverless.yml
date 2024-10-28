@@ -8,6 +8,9 @@ custom:
   rspack:
     keepOutputDirectory: true
     stats: true
+    doctor:
+      enable: false
+      outputDirectory: ./
     mode: production
     tsConfig: './tsconfig.json'
     externals:

@@ -5,6 +5,19 @@ export const PluginOptionsSchema = z.object({
   keepOutputDirectory: z.boolean().optional().default(false),
   zipConcurrency: z.number().optional().default(Infinity),
   stats: z.boolean().optional().default(false),
+  doctor: z
+    .union([
+      z.boolean(),
+      z
+        .object({
+          enable: z.boolean().optional().default(true),
+          outputDirectory: z.string().optional().nullable(),
+        })
+        .optional()
+        .nullable(),
+    ])
+    .optional()
+    .nullable(),
   config: z
     .object({
       path: z.string().optional(),
