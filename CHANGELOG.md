@@ -1,3 +1,14 @@
+## 1.0.0-alpha.10 (2024-10-28)
+
+
+### 🚀 Features
+
+- **sls-rspack:** support Rsdoctor ([d44ff2c](https://github.com/kitchenshelf/serverless-rspack/commit/d44ff2c))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.9 (2024-10-28)
 
 
