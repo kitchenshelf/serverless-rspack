@@ -214,7 +214,7 @@ You can also provide an `outputDirectory` to specify where the report should be 
 custom:
   rspack:
     doctor:
-      doctor: true
+      enable: true
       outputDirectory: ./doctor-report
 ```
 
