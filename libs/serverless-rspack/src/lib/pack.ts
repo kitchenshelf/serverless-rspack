@@ -64,6 +64,12 @@ export async function pack(this: RspackServerlessPlugin) {
  */
 function zipDirectory(sourceDir: string, outPath: string) {
   const archive = archiver('zip', { zlib: { level: 9 } });
+
+  const outDir = path.dirname(outPath);
+
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
   const stream = fs.createWriteStream(outPath);
 
   return new Promise((resolve, reject) => {

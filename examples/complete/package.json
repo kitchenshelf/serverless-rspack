@@ -2,7 +2,9 @@
   "name": "@serverless-rspack/complete",
   "version": "0.0.0",
   "scripts": {
-    "package": "sls package --verbose"
+    "package": "sls package --verbose",
+    "deploy": "sls deploy --verbose",
+    "deploy:func:app3": "sls deploy function -f app3 --verbose"
   },
   "dependencies": {
     "isin-validator": "^1.1.1",

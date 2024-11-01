@@ -74,6 +74,8 @@ describe('RspackServerlessPlugin', () => {
       'initialize',
       'before:package:createDeploymentArtifacts',
       'after:package:createDeploymentArtifacts',
+      'before:deploy:function:packageFunction',
+      'after:deploy:function:packageFunction',
       'before:invoke:local:invoke',
     ]);
   });

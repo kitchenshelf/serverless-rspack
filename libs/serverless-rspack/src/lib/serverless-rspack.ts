@@ -8,6 +8,8 @@ import type ServerlessPlugin from 'serverless/classes/Plugin';
 import { bundle } from './bundle.js';
 import { SERVERLESS_FOLDER, WORK_FOLDER } from './constants.js';
 import { determineFileParts, isNodeFunction } from './helpers.js';
+import { AfterDeployFunctionPackageFunction } from './hooks/deploy-function/after-package-function.js';
+import { BeforeDeployFunctionPackageFunction } from './hooks/deploy-function/before-package-function.js';
 import { Initialize } from './hooks/initialize.js';
 import { BeforeInvokeLocalInvoke } from './hooks/invoke-local/before-invoke.js';
 import { AfterPackageCreateDeploymentArtifacts } from './hooks/package/after-create-deployment-artifacts.js';
@@ -20,7 +22,6 @@ import {
   PluginOptionsSchema,
   RsPackFunctionDefinitionHandler,
 } from './types.js';
-
 export class RspackServerlessPlugin implements ServerlessPlugin {
   serviceDirPath: string;
   buildOutputFolder: string;
@@ -72,12 +73,10 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         BeforePackageCreateDeploymentArtifacts.bind(this),
       'after:package:createDeploymentArtifacts':
         AfterPackageCreateDeploymentArtifacts.bind(this),
-      // 'before:deploy:function:packageFunction': () => {
-      //   this.log.verbose('after:deploy:function:packageFunction');
-      // },
-      // 'after:deploy:function:packageFunction': () => {
-      //   this.log.verbose('after:deploy:function:packageFunction');
-      // },
+      'before:deploy:function:packageFunction':
+        BeforeDeployFunctionPackageFunction.bind(this),
+      'after:deploy:function:packageFunction':
+        AfterDeployFunctionPackageFunction.bind(this),
       'before:invoke:local:invoke': BeforeInvokeLocalInvoke.bind(this),
     };
   }
