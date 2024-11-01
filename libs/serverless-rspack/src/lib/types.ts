@@ -49,6 +49,12 @@ export function isInvokeOptions(
   return typeof options.function === 'string';
 }
 
+export function isDeployFunctionOptions(
+  options: Serverless.Options
+): options is Serverless.Options & { function: string } {
+  return typeof options.function === 'string';
+}
+
 export type PluginFunctionEntries = {
   [name: string]: {
     import: string;

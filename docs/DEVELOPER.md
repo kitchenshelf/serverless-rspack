@@ -18,3 +18,5 @@ To try the plugin in another local repo then
 4. `npx nx release publish` to publish the plugin to the local registry
 5. Follow the [Install Instructions](../README.md#install) as normal in your other local repository, replacing the version with the one you just published.
 6. If you make changes to the plugin, repeat steps 3&4 changing the version number. You will also need to update the `package.json` in your local repo to point to the new version. And perform a fresh install of the plugin in your local repo.
+
+Note: To test the deploy functionality, you will need to have an AWS account and [AWS credentials configured](https://www.serverless.com/framework/docs/providers/aws/guide/credentials).
