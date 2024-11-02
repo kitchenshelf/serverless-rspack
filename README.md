@@ -136,6 +136,25 @@ module.exports = (serverless) => {
 };
 ```
 
+You can also return an async function.
+
+```js
+module.exports = async (serverless) => {
+  const getExternals = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(['lodash']);
+    }, 250);
+  });
+
+  const externals = await getExternals;
+  
+  return {
+    external: externals,
+    // etc
+  };
+};
+```
+
 #### Config file merge strategies
 
 You can change how the plugin uses a provided config via the `strategy` option:
