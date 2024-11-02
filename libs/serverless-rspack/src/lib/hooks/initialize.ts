@@ -22,7 +22,7 @@ export async function Initialize(this: RspackServerlessPlugin) {
       );
     }
 
-    this.providedRspackConfig = configFn(this.serverless);
+    this.providedRspackConfig = await configFn(this.serverless);
   }
 
   const functions = this.serverless.service.getAllFunctions();
