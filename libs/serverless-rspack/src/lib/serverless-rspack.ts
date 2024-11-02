@@ -7,7 +7,12 @@ import type Serverless from 'serverless';
 import type ServerlessPlugin from 'serverless/classes/Plugin';
 import { bundle } from './bundle.js';
 import { SERVERLESS_FOLDER, WORK_FOLDER } from './constants.js';
-import { determineFileParts, isNodeFunction } from './helpers.js';
+import {
+  determineFileParts,
+  enabledViaConfigObject,
+  enabledViaSimpleConfig,
+  isNodeFunction,
+} from './helpers.js';
 import { AfterDeployFunctionPackageFunction } from './hooks/deploy-function/after-package-function.js';
 import { BeforeDeployFunctionPackageFunction } from './hooks/deploy-function/before-package-function.js';
 import { Initialize } from './hooks/initialize.js';
@@ -18,10 +23,12 @@ import { pack } from './pack.js';
 import { scripts } from './scripts.js';
 import {
   PluginFunctionEntries,
+  PluginFunctionScripts,
   PluginOptions,
   PluginOptionsSchema,
   RsPackFunctionDefinitionHandler,
 } from './types.js';
+
 export class RspackServerlessPlugin implements ServerlessPlugin {
   serviceDirPath: string;
   buildOutputFolder: string;
@@ -35,7 +42,8 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
 
   providedRspackConfig: RspackOptions | undefined;
   pluginOptions!: PluginOptions;
-  functionEntries!: PluginFunctionEntries;
+  functionEntries: PluginFunctionEntries = {};
+  functionScripts: PluginFunctionScripts = {};
 
   timings = new Map<string, number>();
 
@@ -52,7 +60,19 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
 
     serverless.configSchemaHandler.defineFunctionProperties('aws', {
       properties: {
-        rspack: { type: 'boolean' },
+        rspack: {
+          oneOf: [
+            { type: 'boolean' },
+            {
+              type: 'object',
+              properties: {
+                enable: { type: 'boolean' },
+                scripts: { type: 'array', items: { type: 'string' } },
+              },
+              required: [],
+            },
+          ],
+        },
       },
     });
 
@@ -92,11 +112,8 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
         functionName
       ) as RsPackFunctionDefinitionHandler;
       if (
-        functionDefinitionHandler.rspack ||
-        isNodeFunction(
-          functionDefinitionHandler,
-          this.serverless.service.provider.runtime
-        )
+        this.isEnabledViaRspack(functionDefinitionHandler) ||
+        this.isEnabledNodeFunction(functionDefinitionHandler)
       ) {
         // TODO: support container images
         const entry = this.getEntryForFunction(
@@ -112,6 +129,32 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
     return entries;
   }
 
+  protected buildFunctionScripts(functions: string[]) {
+    this.log.verbose(
+      `[sls-rspack] Building function scripts for: ${functions}`
+    );
+    const scripts: PluginFunctionScripts = {};
+
+    functions.forEach((functionName) => {
+      const functionDefinitionHandler = this.serverless.service.getFunction(
+        functionName
+      ) as RsPackFunctionDefinitionHandler;
+
+      if (
+        functionDefinitionHandler.rspack &&
+        !enabledViaSimpleConfig(functionDefinitionHandler.rspack) &&
+        functionDefinitionHandler.rspack.enable !== false &&
+        functionDefinitionHandler.rspack.scripts
+      ) {
+        this.log.verbose(
+          `[sls-rspack] Found ${functionDefinitionHandler.rspack.scripts.length} scripts for function ${functionName}`
+        );
+        scripts[functionName] = functionDefinitionHandler.rspack.scripts;
+      }
+    });
+    return scripts;
+  }
+
   protected async cleanup(): Promise<void> {
     if (!this.pluginOptions.keepOutputDirectory) {
       await rm(path.join(this.buildOutputFolderPath), { recursive: true });
@@ -121,6 +164,41 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   protected getPluginOptions() {
     return PluginOptionsSchema.parse(
       this.serverless.service.custom?.['rspack'] ?? {}
+    );
+  }
+
+  private isEnabledNodeFunction(
+    functionDefinitionHandler: RsPackFunctionDefinitionHandler
+  ): boolean | undefined {
+    return (
+      isNodeFunction(
+        functionDefinitionHandler,
+        this.serverless.service.provider.runtime
+      ) && !this.isDisabledViaRspack(functionDefinitionHandler)
+    );
+  }
+
+  private isDisabledViaRspack(
+    functionDefinitionHandler: RsPackFunctionDefinitionHandler
+  ) {
+    return (
+      functionDefinitionHandler.rspack !== undefined &&
+      !enabledViaSimpleConfig(functionDefinitionHandler.rspack) &&
+      !enabledViaConfigObject<typeof functionDefinitionHandler.rspack>(
+        functionDefinitionHandler.rspack
+      )
+    );
+  }
+
+  private isEnabledViaRspack(
+    functionDefinitionHandler: RsPackFunctionDefinitionHandler
+  ) {
+    return (
+      functionDefinitionHandler.rspack &&
+      (enabledViaSimpleConfig(functionDefinitionHandler.rspack) ||
+        enabledViaConfigObject<typeof functionDefinitionHandler.rspack>(
+          functionDefinitionHandler.rspack
+        ))
     );
   }
 

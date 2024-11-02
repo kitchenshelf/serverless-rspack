@@ -30,3 +30,17 @@ export function determineFileParts(handlerFile: string) {
   const fileName = result?.[2] ?? handlerFile;
   return { filePath, fileName };
 }
+
+export function enabledViaSimpleConfig(field: unknown): field is boolean {
+  return typeof field === 'boolean' && field === true;
+}
+
+export function enabledViaConfigObject<T extends { enable?: boolean }>(
+  field: T
+): field is T {
+  return (
+    typeof field === 'object' &&
+    field !== null &&
+    (field.enable === true || field.enable === undefined)
+  );
+}

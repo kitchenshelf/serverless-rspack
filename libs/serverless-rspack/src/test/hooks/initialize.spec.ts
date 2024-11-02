@@ -1,10 +1,22 @@
 import path from 'node:path';
 import { RspackServerlessPlugin } from '../../lib/serverless-rspack.js';
-import { logger, mockOptions, mockServerlessConfig } from '../test-utils.js';
 import { PluginOptions } from '../../lib/types.js';
+import { logger, mockOptions, mockServerlessConfig } from '../test-utils.js';
 
 jest.mock('node:fs', () => ({
-  readdirSync: () => ['hello1.ts', 'hello2.ts'],
+  readdirSync: () => [
+    'hello1.ts',
+    'hello2.ts',
+    'hello3.ts',
+    'hello4.ts',
+    'hello5.ts',
+    'hello6.ts',
+    'hello7.ts',
+    'hello8.ts',
+    'hello9.ts',
+    'hello10.ts',
+    'hello11.ts',
+  ],
 }));
 
 afterEach(() => {
@@ -159,6 +171,184 @@ describe('initialize hook', () => {
     }
   });
 
+  it('should only process node functions that are not disabled via rspack', async () => {
+    const functions = {
+      hello1: {
+        handler: 'hello1.handler',
+        events: [],
+        package: { artifact: 'hello1' },
+        rspack: {
+          enable: false,
+        },
+      },
+      hello2: {
+        handler: 'hello2.handler',
+        events: [],
+        package: { artifact: 'hello2' },
+        rspack: {
+          enable: true,
+        },
+      },
+      hello3: {
+        handler: 'hello3.handler',
+        events: [],
+        package: { artifact: 'hello3' },
+        rspack: false,
+      },
+      hello4: {
+        handler: 'hello4.handler',
+        runtime: 'python3.10',
+        events: [],
+        package: { artifact: 'hello4' },
+      },
+      hello5: {
+        handler: 'hello5.handler',
+        events: [],
+        package: { artifact: 'hello5' },
+      },
+      hello6: {
+        handler: 'hello6.handler',
+        events: [],
+        package: { artifact: 'hello6' },
+        rspack: true,
+      },
+      hello7: {
+        handler: 'hello7.handler',
+        events: [],
+        package: { artifact: 'hello7' },
+        rspack: false,
+      },
+      hello8: {
+        handler: 'hello8.handler',
+        runtime: 'nodejs20.x',
+        events: [],
+        package: { artifact: 'hello8' },
+        rspack: true,
+      },
+      hello9: {
+        handler: 'hello9.handler',
+        runtime: 'nodejs20.x',
+        events: [],
+        package: { artifact: 'hello9' },
+        rspack: false,
+      },
+      hello10: {
+        handler: 'hello10.handler',
+        runtime: 'nodejs20.x',
+        events: [],
+        package: { artifact: 'hello10' },
+        rspack: { enable: true },
+      },
+      hello11: {
+        handler: 'hello11.handler',
+        runtime: 'nodejs20.x',
+        events: [],
+        package: { artifact: 'hello11' },
+        rspack: { enable: false },
+      },
+    };
+    const serverless = mockServerlessConfig({
+      functions,
+      getAllFunctions: jest.fn().mockReturnValue(Object.keys(functions)),
+      getFunction: (name: string) => (functions as any)[name],
+    });
+    const plugin = new RspackServerlessPlugin(serverless, mockOptions, logger);
+
+    await plugin.hooks['initialize']();
+
+    expect(plugin.functionEntries).toEqual({
+      hello2: {
+        filename: '[name]/hello2.js',
+        import: './hello2.ts',
+      },
+      hello5: {
+        filename: '[name]/hello5.js',
+        import: './hello5.ts',
+      },
+      hello6: {
+        filename: '[name]/hello6.js',
+        import: './hello6.ts',
+      },
+      hello8: {
+        filename: '[name]/hello8.js',
+        import: './hello8.ts',
+      },
+      hello10: {
+        filename: '[name]/hello10.js',
+        import: './hello10.ts',
+      },
+    });
+  });
+
+  it('should process none node functions when rspack is enabled', async () => {
+    const functions = {
+      hello1: {
+        handler: 'hello1.handler',
+        runtime: 'custom',
+        events: [],
+        package: { artifact: 'hello1' },
+        rspack: false,
+      },
+      hello2: {
+        handler: 'hello2.handler',
+        runtime: 'custom',
+        events: [],
+        package: { artifact: 'hello2' },
+        rspack: true,
+      },
+      hello3: {
+        handler: 'hello3.handler',
+        runtime: 'custom',
+        events: [],
+        package: { artifact: 'hello3' },
+        rspack: {
+          enable: false,
+        },
+      },
+      hello4: {
+        handler: 'hello4.handler',
+        runtime: 'custom',
+        events: [],
+        package: { artifact: 'hello4' },
+        rspack: {
+          enable: true,
+        },
+      },
+      hello5: {
+        handler: 'hello5.handler',
+        runtime: 'custom',
+        events: [],
+        package: { artifact: 'hello5' },
+        rspack: {
+          scripts: ['echo "hello5"'],
+        },
+      },
+    };
+    const serverless = mockServerlessConfig({
+      functions,
+      getAllFunctions: jest.fn().mockReturnValue(Object.keys(functions)),
+      getFunction: (name: string) => (functions as any)[name],
+    });
+    const plugin = new RspackServerlessPlugin(serverless, mockOptions, logger);
+
+    await plugin.hooks['initialize']();
+
+    expect(plugin.functionEntries).toEqual({
+      hello2: {
+        filename: '[name]/hello2.js',
+        import: './hello2.ts',
+      },
+      hello4: {
+        filename: '[name]/hello4.js',
+        import: './hello4.ts',
+      },
+      hello5: {
+        filename: '[name]/hello5.js',
+        import: './hello5.ts',
+      },
+    });
+  });
+
   it('should create cjs entries by default', async () => {
     const serverless = mockServerlessConfig();
     const plugin = new RspackServerlessPlugin(serverless, mockOptions, logger);
@@ -290,5 +480,66 @@ describe('initialize hook', () => {
         'malformed handler: src/hello2-handler'
       );
     }
+  });
+
+  it('should add script to functionScripts when rspack.scripts is provided and rspack is enabled', async () => {
+    const functions = {
+      hello1: {
+        handler: 'hello1.handler',
+        events: [],
+        package: { artifact: 'hello1' },
+        rspack: {
+          enable: true,
+          scripts: [
+            'echo "First function script"',
+            'echo "Last function script"',
+          ],
+        },
+      },
+      hello2: {
+        handler: 'hello2.handler',
+        events: [],
+        package: { artifact: 'hello2' },
+        rspack: {
+          enable: true,
+        },
+      },
+      hello3: {
+        handler: 'hello3.handler',
+        events: [],
+        package: { artifact: 'hello3' },
+        rspack: true,
+      },
+      hello4: {
+        handler: 'hello4.handler',
+        events: [],
+        package: { artifact: 'hello4' },
+      },
+      hello5: {
+        handler: 'hello5.handler',
+        events: [],
+        package: { artifact: 'hello5' },
+        rspack: { enable: false, scripts: ['echo "hello5"'] },
+      },
+      hello6: {
+        handler: 'hello6.handler',
+        events: [],
+        package: { artifact: 'hello6' },
+        rspack: { scripts: ['echo "hello6"'] },
+      },
+    };
+    const serverless = mockServerlessConfig({
+      functions,
+      getAllFunctions: jest.fn().mockReturnValue(Object.keys(functions)),
+      getFunction: (name: string) => (functions as any)[name],
+    });
+    const plugin = new RspackServerlessPlugin(serverless, mockOptions, logger);
+
+    await plugin.hooks['initialize']();
+
+    expect(plugin.functionScripts).toEqual({
+      hello1: ['echo "First function script"', 'echo "Last function script"'],
+      hello6: ['echo "hello6"'],
+    });
   });
 });

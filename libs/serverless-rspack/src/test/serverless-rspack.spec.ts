@@ -36,7 +36,19 @@ describe('RspackServerlessPlugin', () => {
       plugin.serverless.configSchemaHandler.defineFunctionProperties
     ).toHaveBeenLastCalledWith('aws', {
       properties: {
-        rspack: { type: 'boolean' },
+        rspack: {
+          oneOf: [
+            { type: 'boolean' },
+            {
+              type: 'object',
+              properties: {
+                enable: { type: 'boolean' },
+                scripts: { type: 'array', items: { type: 'string' } },
+              },
+              required: [],
+            },
+          ],
+        },
       },
     });
   });
