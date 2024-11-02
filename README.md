@@ -19,7 +19,6 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 - Supports `sls package`, `sls deploy`
 - Build and runtime performance at its core
 
-
 ## Table of Contents
 
 - [Install](#install)
@@ -29,7 +28,13 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
     - [Read-only default Rspack Options](#read-only-default-rspack-options)
 - [Supported Runtimes](#supported-runtimes)
 - [Advanced Configuration](#advanced-configuration)
+  - [Config File](#config-file)
+    - [Config File Merge Strategies](#config-file-merge-strategies)
   - [External Dependencies](#external-dependencies)
+  - [Scripts](#scripts)
+    - [Function Scripts](#function-scripts)
+    - [Global Scripts](#global-scripts)
+  - [Doctor](#doctor)
 - [Known Issues](#known-issues)
 
 
@@ -67,7 +72,7 @@ custom:
 
 See [example folder](../../examples) for example plugin option configuration.
 
-### Plugin Options
+### Options
 
 | Option                        | Description                                                                                                                            | Default      |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
@@ -98,7 +103,6 @@ The following `rspack` options are automatically set and **cannot** be overwritt
 | Option   | Description                                                                                   | Default     |
 | -------- | --------------------------------------------------------------------------------------------- | ----------- |
 | `rspack` | Set this property on a function definition to force the handler to be processed by the plugin | `undefined` |
-
 
 
 ## Supported Runtimes
@@ -187,33 +191,62 @@ custom:
 
 ### Scripts
 
-Run custom shell commands after your code has been bundled by rspack. 
+Run custom shell commands after your code has been bundled by rspack. This is useful for modifying the output of the build before it is packaged.
 
-**Order**: `bundle` -> `scripts` -> `package`
+There are two types of scripts:
 
-Scripts are executed from the root of the service directory. This is useful for modifying the output of the build before it is packaged.
+1. **Function**: Executed once per defining function after the bundle step.
+2. **Global**: Executed once before the package step.
 
-#### Usage
+**Order**: `bundle` -> `function scripts` -> `global scripts` -> `package`
 
-```yml
-custom:
-  rspack:
-    externals: ['^@aws-sdk/.*$', '^sharp$'],
-    scripts:
-      - 'echo "First script"'
-      - 'cd $KS_BUILD_OUTPUT_FOLDER/App1 && npx npm init -y && npm pkg delete main && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
-      - 'echo "Last script"'
-```
 ⚠️ **Note: Scripts run sequentially and will fail the build if any errors occur in any of the scripts.**
 
-#### Environment Variables
-
-The following environment variables are available to your scripts:
+The following environment variables are available to all your scripts:
 
 - `process.env`: All system environment variables.
 - `KS_SERVICE_DIR`: The absolute path to the service directory (e.g. `/Users/user/code/my-service`).
 - `KS_BUILD_OUTPUT_FOLDER`: The name of the build output folder (e.g. `.rspack`).
 - `KS_PACKAGE_OUTPUT_FOLDER`: The name of the package output folder (e.g. `.serverless`).
+
+#### Function Scripts
+
+Scripts are executed from the function directory in the output folder i.e `.rspack/<function-name>`.
+
+##### Usage
+
+```yml
+functions:
+  app3:
+    handler: src/App3.handler
+    runtime: nodejs20.x
+    rspack:
+      enable: true
+      scripts:
+        - 'echo "First function script"'
+        - 'npx npm init -y && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
+        - 'cp $KS_SERVICE_DIR/src/my-image.jpeg ./'
+        - 'echo "Last function script"'
+```
+
+The following extra environment variables are available to your function scripts:
+
+- `KS_FUNCTION_NAME`: The name of the function being processed.
+
+#### Global Scripts
+
+Scripts are executed from the root of the service directory.
+
+##### Usage
+
+```yml
+custom:
+  rspack:
+    externals: ['^@aws-sdk/.*$'],
+    scripts:
+      - 'echo "First global script"'
+      - 'echo "Last global script"'
+```
 
 ### Doctor
 

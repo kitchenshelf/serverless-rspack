@@ -19,10 +19,8 @@ custom:
       - '^isin-validator$'
       - '^sharp$'
     scripts:
-      - 'echo "First script"'
-      - 'cd $KS_BUILD_OUTPUT_FOLDER/app3 && npx npm init -y && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
-      - 'cp ./src/my-image.jpeg $KS_BUILD_OUTPUT_FOLDER/app3'
-      - 'echo "Last script"'
+      - 'echo "First global script"'
+      - 'echo "Last global script"'
 
 provider:
   name: aws
@@ -42,7 +40,17 @@ functions:
   app3:
     handler: src/App3.handler
     runtime: nodejs20.x
+    rspack:
+      enable: true
+      scripts:
+        - 'echo "First function script"'
+        - 'npx npm init -y && npm install --force --os=linux --cpu=x64 --include=optional sharp @img/sharp-linux-x64'
+        - 'cp $KS_SERVICE_DIR/src/my-image.jpeg ./'
+        - 'echo "Last function script"'
   app4:
     handler: src/app4.handler
   app5:
     handler: src/deeply/nested/somewhat/app5.handler
+  app6:
+    handler: src/deeply/nested/somewhat/app5.handler
+    rspack: false

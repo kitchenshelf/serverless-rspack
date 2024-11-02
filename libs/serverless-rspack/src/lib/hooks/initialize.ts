@@ -36,4 +36,7 @@ export async function Initialize(this: RspackServerlessPlugin) {
     );
   }
   this.log.verbose('[sls-rspack] Function Entries:', this.functionEntries);
+
+  this.functionScripts = this.buildFunctionScripts(functions);
+  this.log.verbose('[sls-rspack] Function Scripts:', this.functionScripts);
 }

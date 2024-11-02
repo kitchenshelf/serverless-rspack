@@ -40,8 +40,13 @@ export const PluginOptionsSchema = z.object({
 export type PluginOptions = z.infer<typeof PluginOptionsSchema>;
 
 export type RsPackFunctionDefinitionHandler = {
-  rspack?: boolean;
+  rspack?: RsPackFunctionDefinition | boolean;
 } & Serverless.FunctionDefinitionHandler;
+
+type RsPackFunctionDefinition = {
+  enable?: boolean;
+  scripts?: string[];
+};
 
 export function isInvokeOptions(
   options: Serverless.Options
@@ -60,4 +65,8 @@ export type PluginFunctionEntries = {
     import: string;
     filename: string;
   };
+};
+
+export type PluginFunctionScripts = {
+  [name: string]: string[];
 };
