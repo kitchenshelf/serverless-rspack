@@ -1,3 +1,18 @@
+## 1.0.0-alpha.11 (2024-11-06)
+
+
+### 🚀 Features
+
+- **sls-pack:** support serverless-offline ([2041d86](https://github.com/kitchenshelf/serverless-rspack/commit/2041d86))
+- **sls-rspack:** support sls cli deploy function ([20fe405](https://github.com/kitchenshelf/serverless-rspack/commit/20fe405))
+- **sls-rspack:** support async rspack config function ([6a9ebcc](https://github.com/kitchenshelf/serverless-rspack/commit/6a9ebcc))
+- **sls-rspack:** support per function scripts ([8e57b12](https://github.com/kitchenshelf/serverless-rspack/commit/8e57b12))
+- **sls-rspack:** update rspack dep to 1.0.14 ([17bd006](https://github.com/kitchenshelf/serverless-rspack/commit/17bd006))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.10 (2024-10-28)
 
 
