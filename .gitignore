@@ -46,3 +46,6 @@ Thumbs.db
 
 .nx/cache
 examples/complete/package-lock.json
+
+# logs
+*-logs.txt

@@ -69,10 +69,10 @@ describe('RspackServerlessPlugin', () => {
     expect(plugin.serviceDirPath).toEqual(
       mockServerlessConfig().config.serviceDir
     );
-
     expect(plugin.packageOutputFolder).toEqual('.serverless');
     expect(plugin.buildOutputFolder).toEqual('.rspack');
     expect(plugin.buildOutputFolderPath).toEqual('/workDir/.rspack');
+    expect(plugin.offlineMode).toEqual(false);
   });
 
   it('should set required hooks', () => {
@@ -89,6 +89,7 @@ describe('RspackServerlessPlugin', () => {
       'before:deploy:function:packageFunction',
       'after:deploy:function:packageFunction',
       'before:invoke:local:invoke',
+      'before:offline:start:init',
     ]);
   });
 });

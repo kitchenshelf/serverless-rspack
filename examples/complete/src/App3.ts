@@ -4,8 +4,12 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
-export async function handler(event: string) {
-  const isInvalid = validateIsin(event);
+type MyEventPayload = {
+  isin: string;
+};
+
+export async function handler(event: MyEventPayload) {
+  const isInvalid = validateIsin(event.isin);
   const imagePath = path.join(__dirname, '../my-image.jpeg');
   const imageBuffer = readFileSync(imagePath);
 

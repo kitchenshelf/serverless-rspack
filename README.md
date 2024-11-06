@@ -16,8 +16,9 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 ## Features
 
 - From zero to hero: configuration possibilities range from zero-config to fully customizable
-- Supports `sls package`, `sls deploy`
 - Build and runtime performance at its core
+- Supports `sls package`, `sls deploy`, `sls deploy function`
+- Integrates with [`Serverless Invoke Local`](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local) & [`serverless-offline`](https://github.com/dherault/serverless-offline)
 
 ## Table of Contents
 
@@ -35,6 +36,8 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
     - [Function Scripts](#function-scripts)
     - [Global Scripts](#global-scripts)
   - [Doctor](#doctor)
+- [Integrations](#integrations)
+  - [Serverless Offline](#serverless-offline)
 - [Known Issues](#known-issues)
 
 
@@ -85,6 +88,7 @@ See [example folder](../../examples) for example plugin option configuration.
 | `esm`                         | Output format will be ESM (experimental).                                                                                              | `false`      |
 | `mode`                        | Used to set the build mode of Rspack to enable the default optimization strategy (https://www.rspack.dev/config/mode).                 | `production` |
 | `tsConfig`                    | Relative path to your tsconfig.                                                                                                        | `undefined`  |
+| `sourcemap`                   | Configure rspack [sourcemaps](https://rspack.dev/config/devtool).                                                                      | `false`      |
 | [`externals`](#external-dependencies) | Provides a way of excluding dependencies from the output bundles.                                                              | `undefined`  |
 | [`scripts`](#scripts)         | Array of scripts to execute after your code has been bundled by rspack.                                                                | `undefined`  |
 | [`doctor`](#doctor)           | Enable the `Rsdoctor` plugin.                                                                                                          | `undefined`  |
@@ -271,6 +275,30 @@ custom:
 ```
 
 ⚠️ **Note: Rsdoctor is configured to run in [`brief`](https://rsdoctor.dev/guide/start/cicd#enabling-brief-mode) mode. If you want to use another mode, you can register `RsdoctorRspackPlugin` manually using the [rspack config option](#config-file).**
+
+## Integrations
+
+### Serverless Offline
+
+The plugin has first class support for [serverless-offline](https://github.com/dherault/serverless-offline).
+
+Add the plugins to your `serverless.yml` file and make sure that `serverless-rspack`
+precedes `serverless-offline` as the order is important:
+
+```yaml
+plugins: ...
+  - serverless-rspack
+  ...
+  - serverless-offline
+  ...
+```
+
+Run `serverless offline start` to start the Lambda/API simulation.
+
+⚠️ **Note: The plugin will automatically set sourcemap to `source-map` when running in offline mode and change the `devtoolModuleFilenameTemplate` to `[absolute-resource-path]`.**
+
+⚠️ **Note: If you are using a custom rspack config, then the serverless plugin passed to your config function will have `offlineMode` set to true.**
+
 
 ## Known Issues
 
