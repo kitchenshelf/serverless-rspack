@@ -17,6 +17,7 @@ import { AfterDeployFunctionPackageFunction } from './hooks/deploy-function/afte
 import { BeforeDeployFunctionPackageFunction } from './hooks/deploy-function/before-package-function.js';
 import { Initialize } from './hooks/initialize.js';
 import { BeforeInvokeLocalInvoke } from './hooks/invoke-local/before-invoke.js';
+import { BeforeOfflineStartInit } from './hooks/offline/start-init.js';
 import { AfterPackageCreateDeploymentArtifacts } from './hooks/package/after-create-deployment-artifacts.js';
 import { BeforePackageCreateDeploymentArtifacts } from './hooks/package/before-create-deployment-artifacts.js';
 import { pack } from './pack.js';
@@ -44,6 +45,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
   pluginOptions!: PluginOptions;
   functionEntries: PluginFunctionEntries = {};
   functionScripts: PluginFunctionScripts = {};
+  offlineMode = false;
 
   timings = new Map<string, number>();
 
@@ -98,6 +100,7 @@ export class RspackServerlessPlugin implements ServerlessPlugin {
       'after:deploy:function:packageFunction':
         AfterDeployFunctionPackageFunction.bind(this),
       'before:invoke:local:invoke': BeforeInvokeLocalInvoke.bind(this),
+      'before:offline:start:init': BeforeOfflineStartInit.bind(this),
     };
   }
 

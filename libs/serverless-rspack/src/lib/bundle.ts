@@ -1,4 +1,5 @@
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+import type { SwcLoaderOptions } from '@rspack/core';
 import {
   type RspackOptions,
   type RspackPluginFunction,
@@ -28,6 +29,7 @@ export async function bundle(
       const baseConfig = defaultConfig(
         entries,
         this.pluginOptions,
+        this.offlineMode,
         this.buildOutputFolderPath,
         this.log
       );
@@ -52,6 +54,7 @@ export async function bundle(
     config = defaultConfig(
       entries,
       this.pluginOptions,
+      this.offlineMode,
       this.buildOutputFolderPath,
       this.log
     );
@@ -95,15 +98,24 @@ const esmOutput = {
 const defaultConfig: (
   entries: RspackOptions['entry'],
   buildOptions: PluginOptions,
+  offlineMode: boolean,
   workFolderPath: string,
   logger: RspackServerlessPlugin['log']
-) => RspackOptions = (entries, buildOptions, workFolderPath, logger) => ({
+) => RspackOptions = (
+  entries,
+  buildOptions,
+  offlineMode,
+  workFolderPath,
+  logger
+) => ({
   mode: buildOptions.mode,
   entry: entries,
   target: 'node',
   experiments: {
     outputModule: buildOptions.esm,
   },
+  devtool:
+    buildOptions.sourcemap !== undefined ? buildOptions.sourcemap : false,
   resolve: {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
     ...(buildOptions.tsConfig
@@ -136,7 +148,6 @@ const defaultConfig: (
     new rspack.node.NodeTargetPlugin(),
     createDoctorPlugin(buildOptions),
   ].filter(Boolean),
-
   module: {
     rules: [
       {
@@ -144,13 +155,13 @@ const defaultConfig: (
         use: {
           loader: 'builtin:swc-loader',
           options: {
-            target: 'es2020',
             jsc: {
+              target: 'es2020',
               parser: {
                 syntax: 'typescript',
               },
             },
-          },
+          } satisfies SwcLoaderOptions,
         },
       },
     ],
@@ -159,9 +170,12 @@ const defaultConfig: (
     mangleExports: false,
   },
   output: {
+    path: workFolderPath,
     library: { type: 'commonjs2' },
     ...(buildOptions.esm ? esmOutput : {}),
-    path: workFolderPath,
+    ...(offlineMode
+      ? { devtoolModuleFilenameTemplate: '[absolute-resource-path]' }
+      : {}),
   },
 });
 

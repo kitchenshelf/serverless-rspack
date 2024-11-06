@@ -7,7 +7,9 @@ plugins:
 custom:
   rspack:
     keepOutputDirectory: true
+    sourcemap: 'source-map'
     stats: true
+    esm: true
     doctor:
       enable: false
       outputDirectory: ./
@@ -38,6 +40,10 @@ functions:
     handler: app2.lambda_handler
     runtime: python3.9
   app3:
+    events:
+      - http:
+          method: get
+          path: helloApp3
     handler: src/App3.handler
     runtime: nodejs20.x
     rspack:
