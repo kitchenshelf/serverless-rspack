@@ -3,13 +3,16 @@ service: esm-example
 plugins:
   - '@kitchenshelf/serverless-rspack'
 
+build:
+  esbuild: false
+
 custom:
   rspack:
     keepOutputDirectory: true
     esm: true
     externals:
-      - "^@aws-sdk\/.*$"
-      - "^@smithy\/.*$"
+      - '^@aws-sdk/.*$'
+      - '^@smithy/.*$'
       - '^isin-validator$'
 
 provider:

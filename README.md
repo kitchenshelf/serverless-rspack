@@ -23,6 +23,7 @@ For Developers - [DEVELOPER.MD](./docs/DEVELOPER.md)
 ## Table of Contents
 
 - [Install](#install)
+  - [Serverless V4](#serverless-v4-requirement)
 - [Plugin Options](#plugin-options)
   - [Examples](#examples)
   - [Options](#options)
@@ -59,6 +60,14 @@ plugins:
   - @kitchenshelf/serverless-rspack
 ```
 
+### Serverless v4 requirement
+
+If you are using Serverless v4 you must disable the default builtin ESBuild support in your `serverless.yml`
+
+```yml
+build:
+  esbuild: false
+```
 
 ## Plugin Options
 
