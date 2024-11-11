@@ -4,6 +4,9 @@ plugins:
   - '@kitchenshelf/serverless-rspack'
   - serverless-offline
 
+build:
+  esbuild: false
+
 custom:
   rspack:
     keepOutputDirectory: true
@@ -16,8 +19,8 @@ custom:
     mode: production
     tsConfig: './tsconfig.json'
     externals:
-      - "^@aws-sdk\/.*$"
-      - "^@smithy\/.*$"
+      - '^@aws-sdk/.*$'
+      - '^@smithy/.*$'
       - '^isin-validator$'
       - '^sharp$'
     scripts:

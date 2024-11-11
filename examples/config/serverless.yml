@@ -4,6 +4,9 @@ plugins:
   - '@kitchenshelf/serverless-rspack'
   - serverless-offline
 
+build:
+  esbuild: false
+
 custom:
   rspack:
     keepOutputDirectory: true
