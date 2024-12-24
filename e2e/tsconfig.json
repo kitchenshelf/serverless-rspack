@@ -1,0 +1,17 @@
+{
+  "include": ["src/**/*.ts", "libs/**/*.ts"],
+  "baseUrl": "./",
+  "compilerOptions": {
+    "rootDir": "./",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "paths": {
+      "@kitchenshelf/path-import-libs/*": ["./libs/*"]
+    }
+  }
+}
