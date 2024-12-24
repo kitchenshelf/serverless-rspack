@@ -25,6 +25,10 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "e2e-local": {
+      "cache": true,
+      "dependsOn": ["^build", "^package"]
     }
   },
   "release": {
@@ -48,8 +52,18 @@
     },
     {
       "plugin": "@nx/jest/plugin",
+      "exclude": ["e2e/**/*"],
       "options": {
         "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "include": ["e2e/**/*"],
+      "options": {
+        "targetName": "e2e-local",
+        "ciTargetName": "e2e-ci",
+        "disableJestRuntime": false
       }
     }
   ]

@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Lambda Function Deployments Top level cloudformation 1`] = `"2010-09-09"`;
+
+exports[`Lambda Function Deployments apps packaged by rspack App1 Lambda Function 1`] = `
+{
+  "DependsOn": [
+    "App1LogGroup",
+  ],
+  "Properties": {
+    "Code": {
+      "S3Bucket": "serverless-framework-deployments-us-east-1-d7c24357-af77",
+      "S3Key": StringContaining "App1.zip",
+    },
+    "FunctionName": "esm-example-dev-App1",
+    "Handler": "app1.handler",
+    "MemorySize": 1024,
+    "Role": {
+      "Fn::GetAtt": [
+        "IamRoleLambdaExecution",
+        "Arn",
+      ],
+    },
+    "Runtime": "provided.al2023",
+    "Timeout": 6,
+  },
+  "Type": "AWS::Lambda::Function",
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack App1 Lambda Function 2`] = `
+{
+  "Description": "Current Lambda function version",
+  "Export": {
+    "Name": "sls-esm-example-dev-App1LambdaFunctionQualifiedArn",
+  },
+  "Value": {
+    "Ref": StringContaining "App1LambdaVersion",
+  },
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack App1 Lambda Function 3`] = `"import{createRequire as e}from"module";var n={};n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,{a:t}),t},n.d=function(e,t){for(var r in t)n.o(t,r)&&!n.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},n.o=function(e,n){return Object.prototype.hasOwnProperty.call(e,n)};var t={};n.d(t,{handler:()=>d});let r=e(import.meta.url)("isin-validator");var a=n.n(r);let o=e(import.meta.url)("@aws-sdk/client-dynamodb"),i=e(import.meta.url)("@aws-sdk/lib-dynamodb"),l=new o.DynamoDBClient({}),m=i.DynamoDBDocumentClient.from(l);async function d(e){let n=a()(e),t=new i.GetCommand({TableName:"AngryAnimals",Key:{CommonName:"Shoebill"}});try{let e=await m.send(t);console.log(e)}catch(e){console.log(e)}return{statusCode:200,body:JSON.stringify({message:n?"ISIN is invalid!":"ISIN is fine!",input:e})}}var s=t.handler;export{s as handler};"`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app3 Lambda Function 1`] = `
+{
+  "DependsOn": [
+    "App3LogGroup",
+  ],
+  "Properties": {
+    "Code": {
+      "S3Bucket": "serverless-framework-deployments-us-east-1-d7c24357-af77",
+      "S3Key": StringContaining "app3.zip",
+    },
+    "FunctionName": "esm-example-dev-app3",
+    "Handler": "src/App3.handler",
+    "MemorySize": 1024,
+    "Role": {
+      "Fn::GetAtt": [
+        "IamRoleLambdaExecution",
+        "Arn",
+      ],
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 6,
+  },
+  "Type": "AWS::Lambda::Function",
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app3 Lambda Function 2`] = `
+{
+  "Description": "Current Lambda function version",
+  "Export": {
+    "Name": "sls-esm-example-dev-App3LambdaFunctionQualifiedArn",
+  },
+  "Value": {
+    "Ref": StringContaining "App3LambdaVersion",
+  },
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app3 Lambda Function 3`] = `"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};"`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app4 Lambda Function 1`] = `
+{
+  "DependsOn": [
+    "App4LogGroup",
+  ],
+  "Properties": {
+    "Code": {
+      "S3Bucket": "serverless-framework-deployments-us-east-1-d7c24357-af77",
+      "S3Key": StringContaining "app4.zip",
+    },
+    "FunctionName": "esm-example-dev-app4",
+    "Handler": "src/app4.handler",
+    "MemorySize": 1024,
+    "Role": {
+      "Fn::GetAtt": [
+        "IamRoleLambdaExecution",
+        "Arn",
+      ],
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 6,
+  },
+  "Type": "AWS::Lambda::Function",
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app4 Lambda Function 2`] = `
+{
+  "Description": "Current Lambda function version",
+  "Export": {
+    "Name": "sls-esm-example-dev-App4LambdaFunctionQualifiedArn",
+  },
+  "Value": {
+    "Ref": StringContaining "App4LambdaVersion",
+  },
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app4 Lambda Function 3`] = `"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};"`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app5 Lambda Function 1`] = `
+{
+  "DependsOn": [
+    "App5LogGroup",
+  ],
+  "Properties": {
+    "Code": {
+      "S3Bucket": "serverless-framework-deployments-us-east-1-d7c24357-af77",
+      "S3Key": StringContaining "app5.zip",
+    },
+    "FunctionName": "esm-example-dev-app5",
+    "Handler": "src/deeply/nested/somewhat/app5.handler",
+    "MemorySize": 1024,
+    "Role": {
+      "Fn::GetAtt": [
+        "IamRoleLambdaExecution",
+        "Arn",
+      ],
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 6,
+  },
+  "Type": "AWS::Lambda::Function",
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app5 Lambda Function 2`] = `
+{
+  "Description": "Current Lambda function version",
+  "Export": {
+    "Name": "sls-esm-example-dev-App5LambdaFunctionQualifiedArn",
+  },
+  "Value": {
+    "Ref": StringContaining "App5LambdaVersion",
+  },
+}
+`;
+
+exports[`Lambda Function Deployments apps packaged by rspack app5 Lambda Function 3`] = `"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};"`;

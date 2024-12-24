@@ -1,0 +1,11 @@
+{
+  "name": "e2e-tests",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "implicitDependencies": [
+    "serverless-rspack",
+    "complete",
+    "config",
+    "esm",
+    "partial-config"
+  ]
+}
