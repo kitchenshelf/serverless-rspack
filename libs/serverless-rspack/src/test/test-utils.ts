@@ -47,7 +47,7 @@ export const packageIndividuallyService: () => Partial<Service> = () => ({
   functions: functions,
   package: { individually: true },
   provider: mockProvider,
-  getFunction: (name) => functions[name],
+  getFunction: jest.fn().mockImplementation((name) => functions[name]),
   getAllFunctions: jest.fn().mockReturnValue(Object.keys(functions)),
 });
 

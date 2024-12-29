@@ -1,6 +1,12 @@
 import type { FunctionDefinitionHandler } from 'serverless';
 
 export const humanSize = (size: number) => {
+  if (size === 0) {
+    return '0.00 B';
+  }
+  if (size >= Number.MAX_SAFE_INTEGER) {
+    return 'MSI';
+  }
   const exponent = Math.floor(Math.log(size) / Math.log(1024));
   const sanitized = (size / 1024 ** exponent).toFixed(2);
 

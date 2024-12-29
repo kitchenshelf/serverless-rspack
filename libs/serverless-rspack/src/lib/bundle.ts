@@ -1,11 +1,14 @@
 import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
-import type { SwcLoaderOptions } from '@rspack/core';
 import {
   type RspackOptions,
   type RspackPluginFunction,
   type RspackPluginInstance,
+  type SwcLoaderOptions,
   type WebpackPluginFunction,
   type WebpackPluginInstance,
+  DefinePlugin,
+  ProgressPlugin,
+  node,
   rspack,
 } from '@rspack/core';
 import { writeFileSync } from 'node:fs';
@@ -141,11 +144,11 @@ const defaultConfig: (
       }
     : {}),
   plugins: [
-    new rspack.DefinePlugin({
+    new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env['NODE_ENV']),
     }),
-    new rspack.ProgressPlugin({}),
-    new rspack.node.NodeTargetPlugin(),
+    new ProgressPlugin({}),
+    new node.NodeTargetPlugin(),
     createDoctorPlugin(buildOptions),
   ].filter(Boolean),
   module: {
