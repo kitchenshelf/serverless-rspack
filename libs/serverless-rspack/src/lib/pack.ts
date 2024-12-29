@@ -1,12 +1,12 @@
 import archiver from 'archiver';
 import fs from 'node:fs';
 import path from 'node:path';
-
 import { humanSize } from './helpers.js';
 import type { RspackServerlessPlugin } from './serverless-rspack.js';
 
 export async function pack(this: RspackServerlessPlugin) {
-  if (!this.functionEntries) {
+  if (Object.keys(this.functionEntries).length === 0) {
+    this.log.verbose('[Pack] No functions to pack');
     return;
   }
   const pMap = (await import('p-map')).default;
@@ -35,7 +35,7 @@ export async function pack(this: RspackServerlessPlugin) {
       );
     } catch (error) {
       throw new this.serverless.classes.Error(
-        `[Pack] Failed to zip ${name}: ${error}`
+        `[Pack] Failed to zip ${name} with: ${error}`
       );
     }
     loadedFunc.package = {
@@ -44,7 +44,7 @@ export async function pack(this: RspackServerlessPlugin) {
   };
 
   this.log.verbose(
-    `[Pack] Pack service ${this.serverless.service.service} with concurrency: [${this.pluginOptions.zipConcurrency}] `
+    `[Pack] Packing service ${this.serverless.service.service} with concurrency: [${this.pluginOptions.zipConcurrency}] `
   );
 
   await pMap(

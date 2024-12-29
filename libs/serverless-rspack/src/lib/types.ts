@@ -48,8 +48,8 @@ export const PluginOptionsSchema = z.object({
     .nullable(),
   config: z
     .object({
-      path: z.string().optional(),
-      strategy: z.enum(['override', 'combine']).default('override'),
+      path: z.string(),
+      strategy: z.enum(['override', 'combine']).optional().default('override'),
     })
     .optional()
     .nullable(),
