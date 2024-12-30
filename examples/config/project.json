@@ -1,4 +1,23 @@
 {
   "name": "config",
-  "$schema": "../node_modules/nx/schemas/project-schema.json"
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd ./examples/config && npm i --no-audit --no-vunerabilities --no-fund"
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd ./examples/config && npm run package"
+      },
+      "dependsOn": [
+        {
+          "target": "install"
+        }
+      ]
+    }
+  }
 }
