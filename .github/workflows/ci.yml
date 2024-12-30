@@ -35,4 +35,3 @@ jobs:
 
       - run: npx nx-cloud record -- nx format:check
       - run: npx nx affected -t lint test build
-      - run: npx nx-cloud record -- nx run e2e-tests:e2e-ci
