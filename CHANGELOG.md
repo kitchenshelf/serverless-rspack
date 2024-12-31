@@ -1,3 +1,15 @@
+## 1.0.0-beta.1 (2024-12-31)
+
+
+### 🚀 Features
+
+- **sls-rspack:** support serverless v4 ([102bc1c](https://github.com/kitchenshelf/serverless-rspack/commit/102bc1c))
+- **sls-rspack:** add e2e test suite ([6cc6aeb](https://github.com/kitchenshelf/serverless-rspack/commit/6cc6aeb))
+
+### ❤️  Thank You
+
+- codingnuclei
+
 ## 1.0.0-alpha.11 (2024-11-06)
 
 
