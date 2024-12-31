@@ -43,7 +43,7 @@ exports[`Lambda Function Deployments apps packaged by rspack App1 Lambda Functio
 `;
 
 exports[`Lambda Function Deployments apps packaged by rspack App1 Lambda Function 3`] = `
-"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
+"import{createRequire as e}from"node:module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
 //# sourceMappingURL=app1.mjs.map"
 `;
 
@@ -88,7 +88,7 @@ exports[`Lambda Function Deployments apps packaged by rspack app3 Lambda Functio
 `;
 
 exports[`Lambda Function Deployments apps packaged by rspack app3 Lambda Function 3`] = `
-"import{fileURLToPath as r}from"url";import{dirname as e}from"path";import{createRequire as t}from"module";var a={};a.n=function(r){var e=r&&r.__esModule?function(){return r.default}:function(){return r};return a.d(e,{a:e}),e},a.d=function(r,e){for(var t in e)a.o(e,t)&&!a.o(r,t)&&Object.defineProperty(r,t,{enumerable:!0,get:e[t]})},a.o=function(r,e){return Object.prototype.hasOwnProperty.call(r,e)};var n={};a.d(n,{handler:()=>f});let o=t(import.meta.url)("isin-validator");var i=a.n(o);let l=t(import.meta.url)("node:fs"),u=t(import.meta.url)("node:path");var m=a.n(u);let p=t(import.meta.url)("sharp");var d=a.n(p),s=e(r(import.meta.url));async function f(r){let e=i()(r.isin),t=m().join(s,"../my-image.jpeg"),a=(0,l.readFileSync)(t),{info:n}=await d()(a).raw().toBuffer({resolveWithObject:!0});return{statusCode:e?200:400,body:JSON.stringify({handler:"App3",message:e?"ISIN is invalid!":"ISIN is fine!",input:r,info:n})}}var c=n.handler;export{c as handler};
+"import{fileURLToPath as e}from"node:url";import{dirname as r}from"node:path";import{createRequire as t}from"node:module";var a={};a.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return a.d(r,{a:r}),r},a.d=function(e,r){for(var t in r)a.o(r,t)&&!a.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:r[t]})},a.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};a.d(n,{handler:()=>f});let o=t(import.meta.url)("isin-validator");var i=a.n(o);let l=t(import.meta.url)("node:fs"),u=t(import.meta.url)("node:path");var d=a.n(u);let m=t(import.meta.url)("sharp");var p=a.n(m),s=r(e(import.meta.url));async function f(e){let r=i()(e.isin),t=d().join(s,"../my-image.jpeg"),a=(0,l.readFileSync)(t),{info:n}=await p()(a).raw().toBuffer({resolveWithObject:!0});return{statusCode:r?200:400,body:JSON.stringify({handler:"App3",message:r?"ISIN is invalid!":"ISIN is fine!",input:e,info:n})}}var c=n.handler;export{c as handler};
 //# sourceMappingURL=App3.mjs.map"
 `;
 
@@ -133,7 +133,7 @@ exports[`Lambda Function Deployments apps packaged by rspack app4 Lambda Functio
 `;
 
 exports[`Lambda Function Deployments apps packaged by rspack app4 Lambda Function 3`] = `
-"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
+"import{createRequire as e}from"node:module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
 //# sourceMappingURL=app4.mjs.map"
 `;
 
@@ -178,6 +178,6 @@ exports[`Lambda Function Deployments apps packaged by rspack app5 Lambda Functio
 `;
 
 exports[`Lambda Function Deployments apps packaged by rspack app5 Lambda Function 3`] = `
-"import{createRequire as e}from"module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
+"import{createRequire as e}from"node:module";var r={};r.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(n,{a:n}),n},r.d=function(e,n){for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)};var n={};r.d(n,{handler:()=>o});let t=e(import.meta.url)("isin-validator");var a=r.n(t);async function o(e){return{statusCode:200,body:JSON.stringify({message:a()(e)?"ISIN is invalid!":"ISIN is fine!",input:e})}}var i=n.handler;export{i as handler};
 //# sourceMappingURL=app5.mjs.map"
 `;
