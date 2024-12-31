@@ -5,7 +5,7 @@ const yargs = require('yargs');
 (async () => {
   try {
     const options = await yargs
-      // @ts-expect-error - don't use the default meaning of version in yargs
+      // don't use the default meaning of version in yargs
       .version(false)
       .option('version', {
         type: 'string',

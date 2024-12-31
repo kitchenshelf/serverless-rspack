@@ -14,7 +14,7 @@ custom:
     stats: true
     esm: true
     doctor:
-      enable: false
+      enable: true
       outputDirectory: ./
     mode: production
     tsConfig: './tsconfig.json'
