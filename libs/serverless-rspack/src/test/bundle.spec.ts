@@ -111,6 +111,10 @@ describe('bundle', () => {
         },
         output: {
           ...defaultConfig.output,
+          environment: {
+            dynamicImport: true,
+            module: true,
+          },
           chunkFormat: 'module',
           chunkLoading: 'import',
           library: {

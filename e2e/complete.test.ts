@@ -5,7 +5,7 @@ import { validateLambdaFunction } from './lib/utilities';
 describe('Lambda Function Deployments', () => {
   let cloudformation: any;
   let testArtifactPath: string;
-  const tempAssertDir = path.join('./assert' + Date.now());
+  const tempAssertDir = path.join('./assert-complete' + Date.now());
 
   beforeAll(() => {
     testArtifactPath = path.resolve(
