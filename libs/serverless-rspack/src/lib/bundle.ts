@@ -96,6 +96,10 @@ const esmOutput = {
   library: {
     type: 'module',
   },
+  environment: {
+    module: true,
+    dynamicImport: true,
+  },
 };
 
 const defaultConfig: (
@@ -245,7 +249,8 @@ function createDoctorPlugin(buildOptions: PluginOptions) {
     ? new RsdoctorRspackPlugin({
         disableClientServer: true,
         mode: 'brief',
-        reportDir: getReportDir(buildOptions.doctor),
+        output: { reportDir: getReportDir(buildOptions.doctor) },
+        experiments: { enableNativePlugin: true },
       })
     : null;
 }

@@ -50,8 +50,8 @@ const config = (serverless) => {
           use: {
             loader: 'builtin:swc-loader',
             options: {
-              target: 'es2020',
               jsc: {
+                target: 'es2020',
                 parser: {
                   syntax: 'typescript',
                 },
