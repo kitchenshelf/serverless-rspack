@@ -6,7 +6,7 @@
 [![Build Status][ico-build]][link-build]
 [![NPM][ico-npm]][link-npm]
 
-Look for the plugin under the [/libs](/libs/serverless-rspack//) directory.
+Look for the plugin under the [/libs](/libs/serverless-rspack/) directory.
 
 Example serverless projects are under the [/examples](/examples) directory.
 
@@ -140,7 +140,7 @@ Rspack configuration can be defined by a config file.
 
 ```yml
 custom:
-  esbuild:
+  rspack:
     config:
       path: './rspack.config.js'
 ```
@@ -148,7 +148,7 @@ custom:
 ```js
 // rspack.config.js
 module.exports = (serverless) => {
-  external: ['lodash'],
+  externals: ['lodash'],
   // etc
 };
 ```
@@ -166,7 +166,7 @@ module.exports = async (serverless) => {
   const externals = await getExternals;
   
   return {
-    external: externals,
+    externals: externals,
     // etc
   };
 };
@@ -178,7 +178,7 @@ You can change how the plugin uses a provided config via the `strategy` option:
 
 ```yml
 custom:
-  esbuild:
+  rspack:
     config:
       path: './rspack.config.js'
       strategy: combine
